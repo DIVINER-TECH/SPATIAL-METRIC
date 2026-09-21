@@ -21,23 +21,10 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Integration = {
-    id: string;
-    platform: string;
-    access_token: string | null;
-};
-
-type RecentPost = {
-    id: string;
-    status: string;
-    created_at: string;
-    content_items: { title: string | null } | null;
-};
-
 const SocialControlRoom = () => {
     const [isConnecting, setIsConnecting] = useState<string | null>(null);
-    const [integrations, setIntegrations] = useState<Integration[]>([]);
-    const [recentPosts, setRecentPosts] = useState<RecentPost[]>([]);
+    const [integrations, setIntegrations] = useState<any[]>([]);
+    const [recentPosts, setRecentPosts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -47,11 +34,11 @@ const SocialControlRoom = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const { data: intData } = await supabase.from('integrations').select('id, platform, access_token');
-            const { data: postData } = await supabase.from('social_posts').select('id, status, created_at, content_items(title)').order('created_at', { ascending: false }).limit(10);
+            const { data: intData } = await supabase.from('integrations' as any).select('*');
+            const { data: postData } = await supabase.from('social_posts' as any).select('*, content_items(title)').order('created_at', { ascending: false }).limit(10);
             
             setIntegrations(intData || []);
-            setRecentPosts((postData || []) as RecentPost[]);
+            setRecentPosts(postData || []);
         } catch (error) {
             console.error("Fetch data error:", error);
         } finally {

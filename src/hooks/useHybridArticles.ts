@@ -1,19 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useContentItems, type ContentItem } from '@/hooks/useContentItems';
 import { articles, type Article } from '@/data/articles';
-
-type ArticleMetadata = {
-    subcategory?: string;
-    region?: string;
-    imageUrl?: string;
-    keyTakeaways?: string[];
-    metrics?: Article['metrics'];
-};
-
-const getArticleMetadata = (metadata: ContentItem['metadata']): ArticleMetadata => {
-    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return {};
-    return metadata as ArticleMetadata;
-};
 
 // Infer category from tags for AI-generated content
 const inferCategory = (item: ContentItem): Article['category'] => {
@@ -27,17 +14,15 @@ const inferCategory = (item: ContentItem): Article['category'] => {
 };
 
 // Transform ContentItem from database to Article type
-const transformContentItem = (item: ContentItem): Article => {
-    const metadata = getArticleMetadata(item.metadata);
-    return {
+const transformContentItem = (item: ContentItem): Article => ({
     id: item.id,
     slug: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     title: item.title,
     excerpt: item.excerpt || '',
     content: item.content || '',
     category: inferCategory(item),
-    subcategory: metadata.subcategory || 'AI Generated',
-    region: metadata.region,
+    subcategory: (item.metadata as any)?.subcategory || 'AI Generated',
+    region: (item.metadata as any)?.region,
     author: {
         name: 'SpatialMetrics AI',
         avatar: 'AI',
@@ -49,15 +34,12 @@ const transformContentItem = (item: ContentItem): Article => {
     trending: false,
     featured: false,
     tags: item.tags || [],
-    imageUrl: metadata.imageUrl || '/placeholder.svg',
-    keyTakeaways: metadata.keyTakeaways || [],
-    metrics: metadata.metrics,
-    };
-};
+    imageUrl: (item.metadata as any)?.imageUrl || '/placeholder.svg',
+    keyTakeaways: (item.metadata as any)?.keyTakeaways || [],
+    metrics: (item.metadata as any)?.metrics,
+});
 
-export const useHybridArticles = (category?: Article['category'], initialLimit: number = 6) => {
-    const [limit, setLimit] = useState(initialLimit);
-    
+export const useHybridArticles = (category?: Article['category'], limit?: number) => {
     // Get ALL AI-generated articles (not filtered by type) so tag-based filtering works
     const { data: contentItems, isLoading } = useContentItems('article', 50);
     // refetchInterval inherited from useContentItems
@@ -92,21 +74,16 @@ export const useHybridArticles = (category?: Article['category'], initialLimit: 
         merged.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 
         // Apply limit if provided
-        const limited = merged.slice(0, limit);
+        if (limit) {
+            merged = merged.slice(0, limit);
+        }
 
-        return {
-            all: merged,
-            limited
-        };
+        return merged;
     }, [contentItems, category, limit]);
 
-    const loadMore = () => setLimit(prev => prev + 6);
-
     return {
-        articles: hybridArticles.limited,
+        articles: hybridArticles,
         isLoading,
-        total: hybridArticles.all.length,
-        hasMore: hybridArticles.all.length > limit,
-        loadMore
+        total: hybridArticles.length,
     };
 };

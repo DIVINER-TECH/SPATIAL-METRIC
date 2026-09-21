@@ -14,16 +14,6 @@ interface GenerateRequest {
   searchResults?: string; // Optional client-side results
 }
 
-type TavilyResult = {
-  title: string;
-  content: string;
-};
-
-type TavilyResponse = {
-  answer?: string;
-  results?: TavilyResult[];
-};
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -69,9 +59,9 @@ serve(async (req) => {
         });
 
         if (searchResponse.ok) {
-          const searchData = await searchResponse.json() as TavilyResponse;
+          const searchData = await searchResponse.json();
           // Format results for the LLM
-          const articles = (searchData.results ?? []).map((r) => `- "${r.title}": ${r.content}`).join("\n");
+          const articles = searchData.results.map((r: any) => `- "${r.title}": ${r.content}`).join("\n");
           finalSearchResults = `Real-time Context:\n${searchData.answer || ''}\n\nSources:\n${articles}`;
           console.log("Live search successful.");
         } else {

@@ -65,7 +65,7 @@ CREATE TRIGGER set_social_posts_updated_at
 CREATE OR REPLACE FUNCTION public.trigger_social_copy_generation()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.type = 'article' AND LOWER(COALESCE(NEW.metadata ->> 'auto_generate_social', 'false')) = 'true' THEN
+    IF NEW.type = 'article' THEN
         PERFORM
             net.http_post(
                 url := 'https://' || (SELECT value FROM secrets WHERE name = 'SUPABASE_PROJECT_REF') || '.supabase.co/functions/v1/generate-carousel-copy',
@@ -84,9 +84,11 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- It also assumes a 'secrets' table or access to env vars which is usually handled via 
 -- standard Supabase webhook UI, but we can define it here for completeness if pg_net is enabled.
 
+/* 
 -- If applying via SQL Editor, ensure pg_net is enabled:
 CREATE EXTENSION IF NOT EXISTS pg_net;
 
 CREATE TRIGGER on_article_created
     AFTER INSERT ON public.content_items
     FOR EACH ROW EXECUTE FUNCTION public.trigger_social_copy_generation();
+*/

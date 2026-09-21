@@ -4,7 +4,6 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LiveIndicator } from '@/components/shared/LiveIndicator';
 import { AIInsightsFeed } from '@/components/ai/AIInsightsFeed';
-import { ContentCoverageBoard } from '@/components/ai/ContentCoverageBoard';
 import { useHybridArticles } from '@/hooks/useHybridArticles';
 import { ArticleCard } from '@/components/articles/ArticleCard';
 import { useMarketSnapshot } from '@/hooks/useMarketSnapshot';
@@ -12,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, BarChart3, Globe, MapPin, RefreshCw, Activity, Loader2, ChevronDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Globe, MapPin, RefreshCw, Activity } from 'lucide-react';
 import { regionalData, getRegionalComparison } from '@/data/regions';
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -113,7 +112,7 @@ const RegionalCard = ({ region }: { region: typeof regionalData[0] }) => {
 };
 
 const MarketIntelligence = () => {
-  const { articles: contentItems, isLoading: isLoadingArticles, hasMore, loadMore } = useHybridArticles('market-intelligence', 9);
+  const { articles: contentItems, isLoading: isLoadingArticles } = useHybridArticles('market-intelligence', 9);
   const { data: snapshot, isLoading: isLoadingSnapshot } = useMarketSnapshot();
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -163,31 +162,29 @@ const MarketIntelligence = () => {
     <div className="min-h-screen flex flex-col relative">
       <Header />
       
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 px-4 md:px-8">
         {/* HUD Sub-Navigation/Header */}
-        <section className="pt-16 pb-12 px-4 md:px-8 relative overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-1/2 h-full bg-primary/5 blur-[120px] pointer-events-none -z-10" />
-          
+        <section className="py-12 relative">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
           >
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="h-16 w-16 rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center bg-primary/5 backdrop-blur-sm"
+                  className="h-14 w-14 rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center"
                 >
-                  <BarChart3 className="h-8 w-8 text-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
+                  <BarChart3 className="h-6 w-6 text-primary" />
                 </motion.div>
                 <div>
-                  <h1 className="text-5xl md:text-6xl font-black font-mono tracking-tighter uppercase leading-none text-foreground">
+                  <h1 className="text-5xl font-bold font-mono tracking-tighter uppercase leading-none">
                     Intelligence<span className="text-primary">.OS</span>
                   </h1>
-                  <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.6em] mt-3">
-                    Terminal Access // Global Market Analytics v2.0
+                  <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.5em] mt-2">
+                    Spatial Computing & Metaverse Market Analytics
                   </p>
                 </div>
               </div>
@@ -267,7 +264,7 @@ const MarketIntelligence = () => {
         </section>
 
         {/* Intelligence Grid */}
-        <section className="py-20 px-4 md:px-8 border-t border-black">
+        <section className="py-20 border-t border-black">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex items-center justify-between mb-16 flex-wrap gap-6">
               <TabsList className="bg-white/50 backdrop-blur-md border border-black/5 p-1.5 rounded-full scale-110 origin-left shadow-sm">
@@ -297,24 +294,6 @@ const MarketIntelligence = () => {
                       ))
                     )}
                   </div>
-
-                  {hasMore && (
-                    <div className="flex justify-center pt-8">
-                      <Button 
-                        onClick={loadMore} 
-                        variant="outline" 
-                        disabled={isLoadingArticles}
-                        className="glass-premium border-primary/20 hover:border-primary px-10 h-14 rounded-full font-mono text-[10px] uppercase tracking-[0.2em] group"
-                      >
-                        {isLoadingArticles ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 mr-2 group-hover:translate-y-1 transition-transform" />
-                        )}
-                        Load More Intelligence
-                      </Button>
-                    </div>
-                  )}
                 </div>
 
                 <motion.div 
@@ -322,7 +301,6 @@ const MarketIntelligence = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   className="space-y-10"
                 >
-                  <ContentCoverageBoard />
                   <AIInsightsFeed />
 
                   <Card className="glass-premium border-black/5 overflow-hidden shadow-sm">

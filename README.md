@@ -27,7 +27,7 @@
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/Diviner-Code/spatialmetric.git
+   git clone https://github.com/your-repo/spatialmetric.git
    cd spatialmetric
    ```
 

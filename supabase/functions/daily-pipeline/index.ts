@@ -11,7 +11,7 @@ const corsHeaders = {
  * Orchestrator that runs the full daily pipeline in sequence:
  *   1. ingest-news   – fetch RSS feeds into news_items
  *   2. daily-market-snapshot – fetch stock data into market_daily_snapshots
- *   3. auto-content  – optionally generate AI market brief + article from news
+ *   3. auto-content  – generate AI market brief + article from news
  *
  * Call this once per day via pg_cron or any external scheduler.
  */
@@ -21,7 +21,6 @@ serve(async (req) => {
   }
 
   const startTime = Date.now();
-  const requestBody = await req.json().catch(() => ({}));
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -45,7 +44,7 @@ serve(async (req) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${serviceRoleKey}`,
+        Authorization: `Bearer ${anonKey}`,
       },
       body: JSON.stringify(body),
     });
@@ -79,8 +78,7 @@ serve(async (req) => {
   }
 
   // Step 3: Auto-content (only if news was ingested)
-  const autoGenerateContent = requestBody?.auto_generate_content === true;
-  if (results["ingest-news"].status === "success" && autoGenerateContent) {
+  if (results["ingest-news"].status === "success") {
     try {
       const data = await callFunction("auto-content");
       results["auto-content"] = { status: "success", detail: data };
@@ -91,10 +89,7 @@ serve(async (req) => {
       };
     }
   } else {
-    results["auto-content"] = {
-      status: "skipped",
-      detail: autoGenerateContent ? "No news ingested" : "Auto content generation disabled",
-    };
+    results["auto-content"] = { status: "skipped", detail: "No news ingested" };
   }
 
   // Log the pipeline run

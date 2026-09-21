@@ -152,39 +152,6 @@ export type Database = {
         }
         Relationships: []
       }
-      integrations: {
-        Row: {
-          access_token: string | null
-          created_at: string | null
-          expires_at: string | null
-          id: string
-          platform: string
-          refresh_token: string | null
-          settings: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          access_token?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          platform: string
-          refresh_token?: string | null
-          settings?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          access_token?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          platform?: string
-          refresh_token?: string | null
-          settings?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       market_daily_snapshots: {
         Row: {
           as_of_date: string
@@ -291,53 +258,6 @@ export type Database = {
           subscribed_at?: string
         }
         Relationships: []
-      }
-      social_posts: {
-        Row: {
-          asset_urls: string[] | null
-          canva_job_id: string | null
-          carousel_copy: Json | null
-          content_item_id: string | null
-          created_at: string | null
-          error_log: string | null
-          id: string
-          live_urls: Json | null
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          asset_urls?: string[] | null
-          canva_job_id?: string | null
-          carousel_copy?: Json | null
-          content_item_id?: string | null
-          created_at?: string | null
-          error_log?: string | null
-          id?: string
-          live_urls?: Json | null
-          status?: string
-          updated_at?: string | null
-        }
-        Update: {
-          asset_urls?: string[] | null
-          canva_job_id?: string | null
-          carousel_copy?: Json | null
-          content_item_id?: string | null
-          created_at?: string | null
-          error_log?: string | null
-          id?: string
-          live_urls?: Json | null
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "social_posts_content_item_id_fkey"
-            columns: ["content_item_id"]
-            isOneToOne: false
-            referencedRelation: "content_items"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_roles: {
         Row: {

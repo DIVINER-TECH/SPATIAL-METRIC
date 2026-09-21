@@ -38,7 +38,6 @@
     --warning-foreground: 0 0% 100%;
 
     --border: 75 13% 88%;
-    --border-brand-dark: 142 76% 15%; /* Tactical Dark Green */
     --input: 75 13% 88%;
     --ring: 63 85% 52%;
 
@@ -93,7 +92,6 @@
     --warning-foreground: 75 100% 4%;
 
     --border: 75 40% 14%;
-    --border-brand-dark: 142 80% 8%; /* Even darker for dark mode stroke */
     --input: 75 40% 14%;
     --ring: 63 85% 52%;
 
@@ -144,7 +142,7 @@
   }
 
   .glass-premium {
-    @apply bg-white/70 backdrop-blur-2xl border border-[hsl(var(--border-brand-dark)/0.2)] dark:bg-black/40 dark:border-[hsl(var(--border-brand-dark)/0.4)];
+    @apply bg-white/70 backdrop-blur-2xl border border-black/5 dark:bg-black/40 dark:border-white/10;
     box-shadow: 
       0 10px 40px -10px rgba(0,0,0,0.1),
       0 0 0 1px rgba(0,0,0,0.02);
@@ -161,10 +159,6 @@
       linear-gradient(to bottom, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
     background-size: 60px 60px;
   }
-
-  .glow-text-subtle {
-    text-shadow: 0 0 15px hsl(var(--primary) / 0.3);
-  }
 }
 
 @keyframes marquee {
@@ -173,8 +167,8 @@
 }
 
 @keyframes scanline {
-  0% { top: -2px; }
-  100% { top: 100%; }
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
 }
 
 .animate-marquee {
