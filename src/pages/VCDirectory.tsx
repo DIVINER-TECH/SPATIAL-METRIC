@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { PageHero } from '@/components/layout/PageHero';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -58,38 +59,25 @@ const VCDirectory = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-10">
-          <section className="py-20 border-b border-black/5 bg-secondary/30 relative overflow-hidden -mx-4 px-4 mb-10">
-            <div className="absolute inset-0 bg-grid-subtle opacity-10 pointer-events-none" />
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="flex flex-col md:flex-row md:items-center gap-8 mb-6">
-                <div className="h-16 w-16 glass-premium flex items-center justify-center border-black/5 rounded-2xl shadow-sm">
-                  <Building2 className="h-8 w-8 text-primary animate-pulse" />
-                </div>
-                <div className="space-y-2">
-                  <h1 className="text-5xl font-bold font-mono tracking-tighter uppercase leading-none">Capital <span className="text-primary">Allocation</span></h1>
-                  <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.5em] mt-3">
-                    VC Database & Portfolio Performance Metrics
-                  </p>
-                </div>
-                <div className="ml-auto flex flex-col items-end gap-4">
-                  <div className="flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                    <Button 
-                      onClick={handleRefresh} 
-                      disabled={isRefreshing}
-                      variant="ghost"
-                      size="sm"
-                      className="gap-2 rounded-full font-mono text-[9px] uppercase tracking-widest hover:bg-primary/5"
-                    >
-                      <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
-                      {isRefreshing ? "Syncing..." : "Sync Systems"}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+        <PageHero
+          title={<>Capital <span className="text-primary">Allocation</span></>}
+          description="VC database & portfolio performance metrics"
+          icon={Building2}
+          action={
+            <Button 
+              onClick={handleRefresh} 
+              disabled={isRefreshing}
+              variant="ghost"
+              size="sm"
+              className="gap-2 rounded-full font-mono text-[9px] uppercase tracking-widest hover:bg-primary/5"
+            >
+              <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Syncing..." : "Sync Systems"}
+            </Button>
+          }
+        />
 
+        <div className="container mx-auto px-4 py-10">
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
             {[

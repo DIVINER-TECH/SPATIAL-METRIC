@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { PageHero } from '@/components/layout/PageHero';
 import { LiveIndicator } from '@/components/shared/LiveIndicator';
 import { AIInsightsFeed } from '@/components/ai/AIInsightsFeed';
 import { useHybridArticles } from '@/hooks/useHybridArticles';
@@ -162,35 +163,13 @@ const MarketIntelligence = () => {
     <div className="min-h-screen flex flex-col relative">
       <Header />
       
-      <main className="flex-1 relative z-10 px-4 md:px-8">
-        {/* HUD Sub-Navigation/Header */}
-        <section className="py-12 relative">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="h-14 w-14 rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center"
-                >
-                  <BarChart3 className="h-6 w-6 text-primary" />
-                </motion.div>
-                <div>
-                  <h1 className="text-5xl font-bold font-mono tracking-tighter uppercase leading-none">
-                    Intelligence<span className="text-primary">.OS</span>
-                  </h1>
-                  <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.5em] mt-2">
-                    Spatial Computing & Metaverse Market Analytics
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
+      <main className="flex-1 relative z-10">
+        <PageHero
+          title={<>Intelligence<span className="text-primary">.OS</span></>}
+          description="Spatial computing & metaverse market analytics"
+          icon={BarChart3}
+          action={
+            <div className="flex items-center gap-3 rounded-full border border-border/60 bg-card/60 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
               <Button 
                 onClick={handleRefresh} 
                 disabled={isRefreshing}
@@ -203,64 +182,66 @@ const MarketIntelligence = () => {
               </Button>
               <LiveIndicator label="RT-STREAM" />
             </div>
-          </motion.div>
+          }
+        />
 
+        <section className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
           <AnimatePresence mode="wait">
-            {isLoadingSnapshot ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center gap-4 p-8 glass-premium border-primary/30 rounded-2xl animate-pulse"
-              >
-                <div className="h-4 w-4 rounded-full bg-primary animate-ping" />
-                <span className="text-sm font-mono text-primary uppercase tracking-[0.3em] font-bold">
-                  Establishing Neural Link with Global Exchanges...
-                </span>
-              </motion.div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-              >
-                {dailyMetrics.map((metric, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <Card className="glass-premium border-black h-full group hover:border-primary/50 transition-all cursor-crosshair overflow-hidden">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
-                      <CardContent className="p-5">
-                        <p className="mb-3 flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                          {metric.label}
-                          <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
-                        </p>
-                        <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
-                          {companies.length > 0 ? (
-                            <CountUp 
-                              value={metric.raw} 
-                              decimals={metric.decimals} 
-                              prefix={metric.prefix} 
-                              suffix={metric.suffix} 
-                            />
-                          ) : metric.status}
-                        </div>
-                        {metric.value !== 0 && metric.label === 'Market Velocity' && (
-                          <div className={`flex items-center gap-1 text-[10px] font-mono uppercase mt-2 ${metric.positive ? 'text-primary-text' : 'text-destructive'}`}>
-                            {metric.positive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-                            {metric.value >= 0 ? '+' : ''}{metric.value.toFixed(2)}%
+              {isLoadingSnapshot ? (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-4 p-8 glass-premium border-primary/30 rounded-2xl animate-pulse"
+                >
+                  <div className="h-4 w-4 rounded-full bg-primary animate-ping" />
+                  <span className="text-sm font-mono text-primary uppercase tracking-[0.3em] font-bold">
+                    Establishing Neural Link with Global Exchanges...
+                  </span>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                >
+                  {dailyMetrics.map((metric, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                    >
+                      <Card className="glass-premium border-black h-full group hover:border-primary/50 transition-all cursor-crosshair overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                        <CardContent className="p-5">
+                          <p className="mb-3 flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                            {metric.label}
+                            <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
+                          </p>
+                          <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
+                            {companies.length > 0 ? (
+                              <CountUp 
+                                value={metric.raw} 
+                                decimals={metric.decimals} 
+                                prefix={metric.prefix} 
+                                suffix={metric.suffix} 
+                              />
+                            ) : metric.status}
                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                          {metric.value !== 0 && metric.label === 'Market Velocity' && (
+                            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase mt-2 ${metric.positive ? 'text-primary-text' : 'text-destructive'}`}>
+                              {metric.positive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                              {metric.value >= 0 ? '+' : ''}{metric.value.toFixed(2)}%
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
         </section>
 
         {/* Intelligence Grid */}

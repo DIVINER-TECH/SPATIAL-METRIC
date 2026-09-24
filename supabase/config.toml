@@ -1,6 +1,9 @@
-project_id = "ymlmuupqiytcwobmxzpz"
+project_id = "wgvmfqkyksfyitmaehkl"
 
 [functions.generate-content]
+verify_jwt = false
+
+[functions.daily-pipeline]
 verify_jwt = false
 
 [functions.daily-market-snapshot]

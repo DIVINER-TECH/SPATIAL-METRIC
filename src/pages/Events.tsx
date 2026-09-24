@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { PageHero } from '@/components/layout/PageHero';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,21 +24,11 @@ const Events = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <section className="py-10 border-b border-border/50 bg-muted/10">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <Calendar className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold font-mono tracking-tighter uppercase">Ecosystem Milestones</h1>
-                <p className="text-muted-foreground font-mono text-sm uppercase tracking-widest mt-1">
-                  Global conferences, product launches, and strategic industry events
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          title={<>Ecosystem <span className="text-primary">Milestones</span></>}
+          description="Global conferences, product launches, and strategic industry events"
+          icon={Calendar}
+        />
 
         {/* Upcoming Events */}
         <section className="py-12">

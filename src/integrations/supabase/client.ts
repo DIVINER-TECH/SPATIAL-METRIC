@@ -3,13 +3,14 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || (import.meta.env.DEV ? 'http://127.0.0.1:54321' : 'https://placeholder.supabase.co');
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || (import.meta.env.DEV ? 'local-dev-key' : 'placeholder-key');
 const IS_PLACEHOLDER_SUPABASE =
   !import.meta.env.VITE_SUPABASE_URL ||
   !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   SUPABASE_URL.includes('placeholder.supabase.co') ||
-  SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+  SUPABASE_PUBLISHABLE_KEY.includes('placeholder') ||
+  SUPABASE_PUBLISHABLE_KEY === 'local-dev-key';
 
 if (IS_PLACEHOLDER_SUPABASE) {
   console.warn(

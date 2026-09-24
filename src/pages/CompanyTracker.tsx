@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { PageHero } from '@/components/layout/PageHero';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -292,34 +293,23 @@ const CompanyTracker = () => {
         <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-1">
-        <section className="py-20 border-b border-black/5 bg-secondary/30 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-subtle opacity-10 pointer-events-none" />
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col md:flex-row md:items-center gap-8 mb-6">
-              <div className="h-16 w-16 glass-premium flex items-center justify-center border-black/5 rounded-2xl shadow-sm">
-                <Rocket className="h-8 w-8 text-primary animate-pulse" />
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-5xl font-bold font-mono tracking-tighter uppercase leading-none">Company <span className="text-primary">Tracker</span></h1>
-                <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.5em] mt-3">
-                  Global XR Entity Monitor & Performance Index
-                </p>
-              </div>
-              <div className="ml-auto flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                <Button 
-                  onClick={handleRefresh} 
-                  disabled={isRefreshing}
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 rounded-full font-mono text-[9px] uppercase tracking-widest hover:bg-primary/5"
-                >
-                  <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
-                  {isRefreshing ? "Syncing..." : "Sync Monitor"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          title={<>Company <span className="text-primary">Tracker</span></>}
+          description="Global XR entity monitor & performance index"
+          icon={Rocket}
+          action={
+            <Button 
+              onClick={handleRefresh} 
+              disabled={isRefreshing}
+              variant="ghost"
+              size="sm"
+              className="gap-2 rounded-full font-mono text-[9px] uppercase tracking-widest hover:bg-primary/5"
+            >
+              <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Syncing..." : "Sync Monitor"}
+            </Button>
+          }
+        />
 
         {/* Stats */}
         <section className="border-b border-black/5 bg-transparent py-12">
