@@ -28,7 +28,21 @@ serve(async (req) => {
     }
 
     const modelId = Deno.env.get("GROQ_MODEL") || "llama-3.1-8b-instant";
-    const { type, topic, region, category, industry, sector, wordCount = 800, searchResults: clientSearchResults } = await req.json() as GenerateRequest;
+
+    let requestBody: GenerateRequest;
+    try {
+      requestBody = await req.json() as GenerateRequest;
+    } catch {
+      return new Response(JSON.stringify({
+        error: "Invalid JSON request body",
+        hint: "Send a JSON payload with at least type, topic, and region."
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { type, topic, region, category, industry, sector, wordCount = 800, searchResults: clientSearchResults } = requestBody;
 
     if (!type) {
       return new Response(JSON.stringify({ error: "Missing content type" }), {
@@ -266,8 +280,19 @@ Format as JSON:
       throw new Error(`Groq API error: ${response.status}`);
     }
 
-    const data = await response.json();
-    const generatedContent = data.choices[0].message.content;
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      const rawText = await response.text().catch(() => "");
+      console.error("Groq response was not valid JSON:", rawText);
+      throw new Error(`Groq returned malformed JSON: ${rawText.slice(0, 200)}`);
+    }
+
+    const generatedContent = data?.choices?.[0]?.message?.content;
+    if (!generatedContent) {
+      throw new Error("Groq returned an empty response payload");
+    }
 
     // Parse JSON from response
     let parsedContent;

@@ -23,7 +23,7 @@ const buildSourceContext = (items: NewsItem[]) => {
   }).join("\n");
 };
 
-const groqAIRequest = async (apiKey: string, systemPrompt: string, userPrompt: string) => {
+const groqAIRequest = async (apiKey: string, modelId: string, systemPrompt: string, userPrompt: string) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -31,7 +31,7 @@ const groqAIRequest = async (apiKey: string, systemPrompt: string, userPrompt: s
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
+      model: modelId,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
@@ -81,6 +81,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const groqKey = Deno.env.get("GROQ_API_KEY") ?? "";
+    const modelId = Deno.env.get("GROQ_MODEL") ?? "llama-3.1-8b-instant";
     if (!supabaseUrl || !serviceRoleKey) throw new Error("Supabase service role not configured");
     if (!groqKey) throw new Error("GROQ_API_KEY is not configured");
 
@@ -88,7 +89,7 @@ serve(async (req) => {
     const payload = await req.json().catch(() => ({}));
     const mode = payload?.mode === "weekly" ? "weekly" : "daily";
 
-    const since = new Date(Date.now() - 1000 * 60 * 60 * 72);
+    const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
     const { data: news, error: newsError } = await supabase
       .from("news_items")
       .select("title,url,summary,published_at, news_sources(name)")
@@ -110,36 +111,36 @@ serve(async (req) => {
     const jsonInstructions = "Return the response as a JSON object matching the requested schema. Use plain text, no markdown bold/italic.";
 
     // Text Generation (Sequential to avoid Groq rate limits)
-    const brief = await groqAIRequest(groqKey,
+    const brief = await groqAIRequest(modelId, groqKey,
       `You are a senior financial analyst producing a concise daily market brief for XR/VR/AR/Spatial Computing investors. ${jsonInstructions}`,
-      `Analyze these recent XR news items and create a market brief. Focus on tracking the ENTIRE industry landscape—including emerging startups, B2B enterprise adoption, and niche hardware/software players—rather than just the top tech giants (Apple, Meta, etc):
+      `Analyze these recent XR news items and create a market brief. Focus on tracking the ENTIRE industry landscape—including emerging startups, B2B enterprise adoption, hardware, software, healthcare, industrial, defense, gaming, and AI + spatial computing signals—rather than just top tech giants. Include notable Meta, Apple, Google, Microsoft, Snap, Qualcomm, and other ecosystem updates when relevant:
       
       ${sourceContext}
       
       Format: { "headline": "string", "summary": "string", "metrics": [{"label": "string", "value": "string", "change": "string"}], "signal": "bullish|bearish|neutral", "reasoning": "string" }`
     );
 
-    const mi1 = await groqAIRequest(groqKey,
+    const mi1 = await groqAIRequest(modelId, groqKey,
       `You are a senior analyst at SpatialMetrics writing for institutional investors. ${jsonInstructions}`,
-      `Write a 600-word market intelligence article about investment trends using these sources. Crucially, your analysis must cover the wide market ecosystem. Do not limit your insights to top players; identify promising startups, funding trends, and diverse sector growth:
+      `Write a 600-word market intelligence article about the latest investment trends using these sources. Crucially, your analysis must cover the wide market ecosystem: startups, enterprise adoption, industrial use cases, healthcare, gaming, hardware, and AI-powered spatial computing. Do not limit the insight to major platform launches alone:
       
       ${sourceContext}
       
       Format: { "title": "string", "excerpt": "string", "content": "600 words text", "tags": ["string"], "keyTakeaways": ["string"], "subcategory": "string" }`
     );
 
-    const tech1 = await groqAIRequest(groqKey,
+    const tech1 = await groqAIRequest(modelId, groqKey,
       `You are a technology analyst at SpatialMetrics. ${jsonInstructions}`,
-      `Write a 600-word technology deep-dive explainer about current XR innovations using these sources:
+      `Write a 600-word technology deep-dive explainer about the newest XR innovations and platform launches using these sources. Cover product changes, user experience shifts, infrastructure, AI integrations, and device ecosystem updates across the market:
       
       ${sourceContext}
       
       Format: { "title": "string", "excerpt": "string", "content": "600 words text", "tags": ["string"], "keyTakeaways": ["string"], "subcategory": "string" }`
     );
 
-    const spatial = await groqAIRequest(groqKey,
+    const spatial = await groqAIRequest(modelId, groqKey,
       `You are a journalist at SpatialMetrics covering XR industry news. ${jsonInstructions}`,
-      `Write a 600-word industry update article using these sources:
+      `Write a 600-word industry update article using these sources. Cover newest launches, partnerships, regulations, funding, consumer adoption, and enterprise deployments. Prioritize live signals from Meta, Apple, Google, Microsoft, Snap, enterprise buyers, and emerging startups:
       
       ${sourceContext}
       
