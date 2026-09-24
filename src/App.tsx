@@ -30,6 +30,12 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 
+const getStoredTheme = () => {
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark" || saved === "light") return saved;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
 const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
@@ -46,13 +52,14 @@ const AnimatedRoutes = () => {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    const currentTheme = getStoredTheme();
+    document.documentElement.classList.toggle("dark", currentTheme === "dark");
+    document.documentElement.style.colorScheme = currentTheme;
   }, []);
   
   return (
     <div 
-      className="relative min-h-screen bg-background text-foreground selection:bg-primary/30 overflow-x-hidden"
+      className="relative min-h-screen bg-background text-foreground overflow-x-hidden"
       onMouseMove={handleMouseMove}
     >
       <CustomCursor />
