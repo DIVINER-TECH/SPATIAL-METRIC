@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -14,6 +15,10 @@ export const CustomCursor = () => {
     const handleMouseMove = (event: MouseEvent) => {
       setIsVisible(true);
       setPosition({ x: event.clientX, y: event.clientY });
+
+      const target = event.target as HTMLElement | null;
+      const interactive = !!target?.closest("a, button, [role='button'], input, textarea, select");
+      setIsHovering(interactive);
     };
 
     const handleMouseLeave = () => setIsVisible(false);
@@ -42,8 +47,33 @@ export const CustomCursor = () => {
       }}
     >
       <div className="relative h-0 w-0">
-        <div className="absolute -left-[1px] -top-5 h-10 w-[2px] bg-white" />
-        <div className="absolute -left-5 -top-[1px] h-[2px] w-10 bg-white" />
+        <div
+          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary bg-primary/10"
+          style={{
+            width: isHovering ? 28 : 16,
+            height: isHovering ? 28 : 16,
+            left: 0,
+            top: 0,
+          }}
+        />
+        <div
+          className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary"
+          style={{
+            width: 2,
+            height: isHovering ? 18 : 12,
+            left: 0,
+            top: 0,
+          }}
+        />
+        <div
+          className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary"
+          style={{
+            width: isHovering ? 18 : 12,
+            height: 2,
+            left: 0,
+            top: 0,
+          }}
+        />
       </div>
     </div>
   );

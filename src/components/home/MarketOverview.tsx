@@ -74,14 +74,14 @@ export function MarketOverview() {
         className="mb-16"
       >
         <div className="flex items-center gap-4 mb-6">
-          <div className="h-10 w-10 glass-premium border-black flex items-center justify-center rounded-lg">
-            <BarChart3 className="h-5 w-5 text-primary" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-card/60 text-primary">
+            <BarChart3 className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold font-mono tracking-tighter uppercase leading-none">
-              Market <span className="text-primary">Dynamics</span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.06em] text-foreground uppercase leading-none">
+              Market <span className="text-primary">dynamics</span>
             </h2>
-            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.5em] mt-3">
+            <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
               Spatial computing market variance & vector analytics
             </p>
           </div>
@@ -95,16 +95,16 @@ export function MarketOverview() {
           viewport={{ once: true }}
           className="lg:col-span-2"
         >
-          <Card className="glass-premium border-black overflow-hidden h-full group">
-            <CardHeader className="border-b border-black bg-black/40 p-6">
-              <CardTitle className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold flex items-center gap-3">
-                  <Activity className="h-4 w-4 text-primary animate-pulse" />
-                  Performance Vector Matrix
+          <Card className="glass-premium overflow-hidden h-full group">
+            <CardHeader className="border-b border-border/60 bg-card/60 p-6">
+              <CardTitle className="flex items-center justify-between gap-4">
+                <span className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.24em] text-foreground">
+                  <Activity className="h-4 w-4 text-primary" />
+                  Performance vector matrix
                 </span>
-                <div className={`flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-black/40 border border-border/50 ${indexChangePercent >= 0 ? "text-primary" : "text-destructive"}`}>
+                <div className={`flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] ${indexChangePercent >= 0 ? "text-primary" : "text-muted-foreground"}`}>
                   {indexChangePercent >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                  {latestIndex ? `${indexChangePercent >= 0 ? "+" : ""}${indexChangePercent.toFixed(2)}%` : "SYNCHRONIZING"}
+                  {latestIndex ? `${indexChangePercent >= 0 ? "+" : ""}${indexChangePercent.toFixed(2)}%` : "Synchronizing"}
                 </div>
               </CardTitle>
             </CardHeader>
@@ -122,28 +122,28 @@ export function MarketOverview() {
                       dataKey="date" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9, fontFamily: "var(--font-mono)" }} 
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9, fontFamily: "var(--font-mono)" }} 
                       tickFormatter={formatAxisDate} 
                       dy={15}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9, fontFamily: "var(--font-mono)" }} 
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9, fontFamily: "var(--font-mono)" }} 
                       tickFormatter={value => `$${value}`} 
                       dx={-15}
                     />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: "rgba(0, 0, 0, 0.9)", 
-                        border: "1px solid rgba(255, 255, 255, 0.1)", 
+                        backgroundColor: "hsl(var(--card))", 
+                        border: "1px solid hsl(var(--border))", 
                         borderRadius: "12px",
                         backdropFilter: "blur(20px)",
                         fontFamily: "var(--font-mono)",
                         fontSize: "9px",
                         textTransform: "uppercase",
                         letterSpacing: "0.2em",
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+                        boxShadow: "0 10px 30px rgba(0,0,0,0.18)"
                       }} 
                       labelStyle={{ color: "hsl(var(--primary))", fontWeight: "bold", marginBottom: "4px" }} 
                       formatter={(value: number) => [`${value.toFixed(2)} UNIT`, "VALUE"]} 
@@ -174,25 +174,25 @@ export function MarketOverview() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <Card className="glass-premium border-black h-full group hover:bg-white/[0.02] transition-colors relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Card className="glass-premium h-full group transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-primary/10 blur-3xl opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="p-8">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black border border-white/5 group-hover:border-primary/40 transition-all duration-500">
-                      <stat.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
+                  <div className="mb-6 flex items-start justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/60 bg-secondary/80">
+                      <stat.icon className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
                     </div>
                     {stat.change ? (
-                      <div className={`flex items-center gap-1 text-[9px] font-mono font-bold uppercase tracking-[0.2em] px-3 py-1 bg-black rounded-full border border-white/5 ${stat.positive ? "text-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]" : "text-destructive"}`}>
+                      <div className={`flex items-center gap-1 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.22em] ${stat.positive ? "text-primary" : "text-muted-foreground"}`}>
                         {stat.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                         {stat.change}
                       </div>
                     ) : (
-                      <div className="h-1.5 w-1.5 rounded-full bg-primary/20 animate-pulse" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     )}
                   </div>
                   <div>
-                    <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-[0.3em] mb-2 group-hover:text-white/60 transition-colors">{stat.title}</p>
-                    <p className="text-4xl font-bold font-mono tracking-tighter text-white group-hover:text-primary transition-colors duration-500">{stat.value}</p>
+                    <p className="mb-2 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">{stat.title}</p>
+                    <p className="text-4xl font-semibold tracking-[-0.06em] text-foreground transition-colors duration-500 group-hover:text-primary">{stat.value}</p>
                   </div>
                 </CardContent>
               </Card>

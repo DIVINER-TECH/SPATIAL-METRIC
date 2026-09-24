@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Activity, Zap, Target } from "lucide-react";
+import { ArrowRight, TrendingUp, Activity, Zap, Target, ChevronRight } from "lucide-react";
 import { useMarketSnapshot } from "@/hooks/useMarketSnapshot";
 import { MarketTicker } from "./MarketTicker";
 
@@ -18,136 +18,142 @@ export function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden border-b border-black/5 bg-secondary/30">
-      {/* HUD Background Flourish */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] border border-primary/10 rounded-full opacity-20 animate-pulse" />
-      </div>
-      
-      <div className="container relative pt-32 pb-24 md:pt-40 md:pb-32">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* System Status HUD */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full glass-premium border-black/5 mb-12 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.05)]"
-          >
-            <div className="relative">
-              <Target className="h-4 w-4 text-primary animate-pulse" />
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border border-primary/40 rounded-full scale-150 border-dashed"
-              />
-            </div>
-            <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-[0.4em]">Spatial Intelligence Active</span>
-            <div className="flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
-          </motion.div>
+    <section className="relative overflow-hidden border-b border-border/60 bg-[#0a1d1a]">
+      <div className="absolute inset-0 bg-grid-dynamic opacity-30 pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
-          {/* Holographic Heading */}
-          <div className="relative mb-10">
-            <motion.h1 
+      <div className="container relative py-16 md:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="max-w-3xl">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-6xl md:text-8xl lg:text-9xl font-bold font-mono tracking-[calc(-0.05em)] uppercase leading-[0.85] relative z-10"
+              className="mb-8 inline-flex items-center gap-3 rounded-full border border-border/70 bg-card/60 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.2em] text-primary"
             >
-              Intelligence for <br />
-              <span className="text-primary relative inline-block">
-                Spatial Computing
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ delay: 1, duration: 1 }}
-                  className="absolute bottom-4 left-0 h-1 bg-primary/30 blur-sm"
-                />
-              </span>
+              <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_rgba(170,245,106,0.9)]" />
+              Spatial intelligence active
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-5xl font-bold leading-[0.9] tracking-[-0.06em] text-foreground md:text-7xl"
+            >
+              Intelligence for the
+              <span className="mt-2 block text-gradient">next frontier.</span>
             </motion.h1>
-            <div className="absolute inset-0 pointer-events-none select-none opacity-20 blur-3xl bg-primary/20 -z-10 scale-150" />
-          </div>
 
-          {/* Terminal Subheading */}
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="text-xs md:text-sm font-mono text-muted-foreground mb-16 max-w-3xl mx-auto uppercase tracking-[0.3em] leading-relaxed relative"
-          >
-            <span className="text-primary/60 mr-2">[ROOT::ACCESS//]</span>
-            Real-time market velocity tracking, multi-node entity valuation, and strategic signal identification across the global XR infrastructure.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 }}
+              className="mt-6 max-w-xl text-sm leading-7 text-muted-foreground md:text-base"
+            >
+              Real-time market velocity, company-level signal mapping, and strategic intelligence across the global spatial computing ecosystem.
+            </motion.p>
 
-          {/* Premium CTA Matrix */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-8 justify-center mb-24"
-          >
-            <Link to="/dashboard">
-              <Button size="lg" className="group relative w-full sm:w-auto gap-4 font-mono uppercase text-[10px] tracking-[0.2em] h-14 px-10 bg-primary text-black hover:bg-primary/90 transition-all shadow-[0_0_30px_rgba(var(--primary),0.3)] hover:shadow-[0_0_50px_rgba(var(--primary),0.5)] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <TrendingUp className="h-4 w-4" />
-                Establish Control
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Link to="/market-intelligence">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-4 font-mono uppercase text-[10px] tracking-[0.2em] h-14 px-10 glass-premium border-black/5 text-foreground hover:bg-black/5 transition-all">
-                <Zap className="h-4 w-4 text-primary" />
-                Intelligence Stream
-              </Button>
-            </Link>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18 }}
+              className="mt-8 flex flex-col gap-4 sm:flex-row"
+            >
+              <Link to="/dashboard">
+                <Button size="lg" className="group h-12 gap-3 rounded-full bg-primary px-6 text-[10px] font-medium uppercase tracking-[0.22em] text-primary-foreground shadow-[0_0_22px_rgba(170,245,106,0.24)] hover:bg-primary/90">
+                  Access dashboard
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link to="/market-intelligence">
+                <Button size="lg" variant="outline" className="h-12 rounded-full border-border/70 bg-card/50 px-6 text-[10px] font-medium uppercase tracking-[0.22em] text-foreground hover:bg-card">
+                  Market view
+                </Button>
+              </Link>
+            </motion.div>
 
-          {/* Stats Matrix */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto px-4">
-            {[
-              { label: 'Active Capitalization', val: formatMarketCap(totalMarketCap), icon: Activity },
-              { label: 'Neural Nodes Tracked', val: companies.length || "0", icon: Target },
-              { label: 'Signal Refresh Rate', val: '24H/RT', icon: Zap }
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1 + (i * 0.1) }}
-                className="group relative p-8 glass-premium border-black/5 hover:border-primary/50 transition-all duration-500 overflow-hidden"
-              >
-                <div className="absolute top-0 left-0 w-1 h-0 bg-primary group-hover:h-full transition-all duration-500" />
-                <div className="text-4xl font-bold font-mono text-primary tracking-tighter mb-2 group-hover:translate-x-1 transition-transform">{stat.val}</div>
-                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-[0.3em] font-bold group-hover:text-foreground transition-colors flex items-center gap-2">
-                  <stat.icon className="h-3 w-3" />
-                  {stat.label}
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {[
+                { label: "Capitalization", value: formatMarketCap(totalMarketCap), icon: Activity },
+                { label: "Tracked entities", value: companies.length ? `${companies.length}` : "—", icon: Target },
+                { label: "Signal cadence", value: "24H/RT", icon: Zap },
+              ].map((stat) => (
+                <div key={stat.label} className="rounded-2xl border border-border/60 bg-card/60 p-4">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-secondary/60">
+                    <stat.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="text-2xl font-semibold tracking-[-0.05em] text-foreground">{stat.value}</div>
+                  <div className="mt-1 text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{stat.label}</div>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Sync Metadata */}
-          <AnimatePresence>
-            {snapshot?.asOfDate && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                className="mt-16 flex items-center justify-center gap-6"
-              >
-                <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-primary/50" />
-                <p className="text-[9px] font-mono text-primary uppercase tracking-[0.5em] font-bold">
-                  Last Synchronization: {new Date(snapshot.asOfDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                </p>
-                <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-primary/50" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="relative"
+          >
+            <div className="rounded-[28px] border border-border/60 bg-card/70 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+              <div className="overflow-hidden rounded-[20px] border border-border/60 bg-[#081713]">
+                <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+                  </div>
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Market map</span>
+                </div>
+
+                <div className="grid gap-4 p-5">
+                  <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Capital index</span>
+                      <span className="text-[10px] font-semibold text-primary">+4.82%</span>
+                    </div>
+                    <div className="flex h-28 items-end gap-2">
+                      {[18, 36, 28, 52, 44, 64, 58, 85, 76, 92].map((bar, index) => (
+                        <div
+                          key={index}
+                          className="flex-1 rounded-t-xl bg-gradient-to-t from-primary/25 to-primary"
+                          style={{ height: `${bar}%` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                      <div className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Top region</div>
+                      <div className="mt-3 text-xl font-semibold text-foreground">North America</div>
+                      <div className="mt-2 text-sm text-primary">$1.28T signal load</div>
+                    </div>
+                    <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                      <div className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">AI infra</div>
+                      <div className="mt-3 text-xl font-semibold text-foreground">+13.4%</div>
+                      <div className="mt-2 text-sm text-primary">Momentum</div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/60 bg-primary/10 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Critical signal</div>
+                        <div className="mt-2 text-lg font-semibold text-foreground">XR infrastructure is compounding</div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-primary" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Market Ticker with HUD overlay */}
-      <div className="relative z-20 border-t border-black/5 bg-white/80 backdrop-blur-xl">
+      <div className="relative z-20 border-t border-border/60 bg-card/60 backdrop-blur-xl">
         <MarketTicker />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-primary/5 to-transparent h-4 top-0" />
       </div>
     </section>
   );
