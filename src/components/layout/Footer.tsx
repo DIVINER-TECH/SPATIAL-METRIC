@@ -29,9 +29,11 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-6 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary group-hover:scale-110 transition-transform">
-                <BarChart3 className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="SpatialMetrics logo"
+                className="h-10 w-10 rounded-xl border border-primary/30 bg-primary/5 object-cover shadow-[0_0_18px_rgba(170,245,106,0.12)] transition-transform group-hover:scale-105"
+              />
               <span className="text-xl font-bold font-mono tracking-tighter uppercase">SpatialMetrics</span>
             </Link>
             <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-8 leading-relaxed opacity-80">

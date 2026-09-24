@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, TrendingUp, Building2, Landmark, Cpu, CalendarDays, Globe } from "lucide-react";
 
 const navItems = [
-  { label: "Market", href: "/market-intelligence" },
-  { label: "Company", href: "/company-tracker" },
-  { label: "VC", href: "/vc-directory" },
-  { label: "Tech", href: "/tech-explain" },
-  { label: "Event", href: "/events" },
-  { label: "Updates", href: "/spatial-updates" },
+  { label: "Market", href: "/market-intelligence", icon: TrendingUp },
+  { label: "Company", href: "/company-tracker", icon: Building2 },
+  { label: "VC", href: "/vc-directory", icon: Landmark },
+  { label: "Tech", href: "/tech-explain", icon: Cpu },
+  { label: "Event", href: "/events", icon: CalendarDays },
+  { label: "Updates", href: "/spatial-updates", icon: Globe },
 ];
 
 export function Header() {
@@ -20,13 +20,16 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         scrolled
           ? "border-b border-border/60 bg-[#071611]/90 shadow-[0_12px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl"
           : "border-b border-transparent bg-transparent"
@@ -37,7 +40,7 @@ export function Header() {
           <img
             src="/logo.png"
             alt="SpatialMetrics logo"
-            className="h-8 w-8 rounded-md border border-primary/30 bg-primary/5 object-cover shadow-[0_0_18px_rgba(170,245,106,0.12)]"
+            className="h-8 w-8 object-contain"
           />
           <span className="text-lg font-bold tracking-[0.12em] uppercase text-foreground">
             Spatial<span className="text-primary">Metrics</span>
@@ -60,10 +63,11 @@ export function Header() {
                 className="relative group"
               >
                 <div
-                  className={`flex items-center px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] transition-all rounded-full ${
-                    isActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"
+                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] transition-all ${
+                    isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
+                  <item.icon className="h-3.5 w-3.5" />
                   {item.label}
                 </div>
               </Link>
@@ -101,11 +105,12 @@ export function Header() {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`px-4 py-3 text-[10px] uppercase tracking-[0.24em] rounded-xl transition-colors ${
+                  className={`flex items-center gap-2 rounded-xl px-4 py-3 text-[10px] uppercase tracking-[0.24em] transition-colors ${
                     location.pathname === item.href ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-card/60"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
+                  <item.icon className="h-3.5 w-3.5" />
                   {item.label}
                 </Link>
               ))}

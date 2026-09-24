@@ -305,13 +305,13 @@ const CompanyTracker = () => {
                   Global XR Entity Monitor & Performance Index
                 </p>
               </div>
-              <div className="ml-auto flex items-center gap-4 bg-white/50 backdrop-blur-md p-1.5 rounded-full border border-black/5 shadow-sm">
+              <div className="ml-auto flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
                 <Button 
                   onClick={handleRefresh} 
                   disabled={isRefreshing}
                   variant="ghost"
                   size="sm"
-                  className="gap-2 font-mono text-[9px] uppercase tracking-widest hover:bg-black/5 rounded-full"
+                  className="gap-2 rounded-full font-mono text-[9px] uppercase tracking-widest hover:bg-primary/5"
                 >
                   <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
                   {isRefreshing ? "Syncing..." : "Sync Monitor"}
@@ -322,9 +322,9 @@ const CompanyTracker = () => {
         </section>
 
         {/* Stats */}
-        <section className="py-12 border-b border-black/5 bg-white/50 backdrop-blur-sm">
+        <section className="border-b border-black/5 bg-transparent py-12">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-5">
               {[
                 { icon: Building2, label: 'Total Companies', raw: stats.total },
                 { icon: BarChart3, label: 'Public Companies', raw: stats.publicCount },
@@ -333,13 +333,13 @@ const CompanyTracker = () => {
                 { icon: DollarSign, label: 'Total Market Cap', raw: stats.totalMarketCap || stats.totalFunding, prefix: '$', suffix: stats.totalMarketCap > 0 ? 'T' : 'B', divisor: stats.totalMarketCap > 0 ? 1e12 : 1000 },
               ].map(s => (
                 <Card key={s.label} className="glass-premium border-black/5 hover:border-primary/50 transition-all group overflow-hidden shadow-sm">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-primary/10 group-hover:bg-primary transition-colors" />
+                    <div className="absolute top-0 left-0 h-full w-1 bg-primary/10 transition-colors group-hover:bg-primary" />
                     <CardContent className="p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <s.icon className="h-3 w-3 text-primary" />
-                        <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">{s.label}</p>
+                      <div className="mb-3 flex items-center gap-2">
+                        <s.icon className="h-4 w-4 text-primary" />
+                        <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">{s.label}</p>
                       </div>
-                      <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
+                      <div className="text-2xl font-bold font-mono tracking-tighter transition-colors group-hover:text-primary">
                         <CountUp value={s.divisor ? s.raw / s.divisor : s.raw} prefix={s.prefix || ""} suffix={s.suffix || ""} decimals={s.divisor ? 1 : 0} />
                       </div>
                     </CardContent>

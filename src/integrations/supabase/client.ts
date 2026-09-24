@@ -5,13 +5,22 @@ import { brokeredPreviewStorage } from './previewAuthStorage';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key';
+const IS_PLACEHOLDER_SUPABASE =
+  !import.meta.env.VITE_SUPABASE_URL ||
+  !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  SUPABASE_URL.includes('placeholder.supabase.co') ||
+  SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
 
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
-  console.warn('Supabase environment variables are missing. Frontend data hooks will use fallback content until deployment config is added.');
+if (IS_PLACEHOLDER_SUPABASE) {
+  console.warn(
+    'Supabase is not configured for this deployment. Realtime, edge functions, and data hooks will fall back safely until VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set to the live project.'
+  );
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
+
+export const isSupabaseConfigured = !IS_PLACEHOLDER_SUPABASE;
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {

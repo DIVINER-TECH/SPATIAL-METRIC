@@ -190,7 +190,7 @@ const MarketIntelligence = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-white/50 backdrop-blur-md p-2 rounded-full border border-black/5 shadow-sm">
+            <div className="flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
               <Button 
                 onClick={handleRefresh} 
                 disabled={isRefreshing}
@@ -234,7 +234,7 @@ const MarketIntelligence = () => {
                     <Card className="glass-premium border-black h-full group hover:border-primary/50 transition-all cursor-crosshair overflow-hidden">
                       <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
                       <CardContent className="p-5">
-                        <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest mb-3 flex items-center justify-between">
+                        <p className="mb-3 flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
                           {metric.label}
                           <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
                         </p>
@@ -267,9 +267,9 @@ const MarketIntelligence = () => {
         <section className="py-20 border-t border-black">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex items-center justify-between mb-16 flex-wrap gap-6">
-              <TabsList className="bg-white/50 backdrop-blur-md border border-black/5 p-1.5 rounded-full scale-110 origin-left shadow-sm">
-                <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-black font-mono text-[10px] uppercase tracking-widest px-10 h-10 rounded-full transition-all">TERMINAL FEED</TabsTrigger>
-                <TabsTrigger value="regional" className="data-[state=active]:bg-primary data-[state=active]:text-black font-mono text-[10px] uppercase tracking-widest px-10 h-10 rounded-full transition-all">REGIONAL MATRIX</TabsTrigger>
+              <TabsList className="border border-primary/20 bg-card/60 p-1.5 rounded-full scale-110 origin-left shadow-[0_12px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
+                <TabsTrigger value="overview" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">TERMINAL FEED</TabsTrigger>
+                <TabsTrigger value="regional" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">REGIONAL MATRIX</TabsTrigger>
               </TabsList>
 
               <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/30 to-transparent hidden md:block mx-8" />

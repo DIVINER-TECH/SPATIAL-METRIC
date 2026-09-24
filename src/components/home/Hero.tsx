@@ -18,8 +18,13 @@ export function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden border-b border-border/60 bg-[#0a1d1a]">
-      <div className="absolute inset-0 bg-grid-dynamic opacity-30 pointer-events-none" />
+    <section className="relative overflow-hidden border-b border-border/60 bg-[#020707]">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/hero_section.png')" }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,7,7,0.78)_0%,rgba(2,7,7,0.52)_32%,rgba(2,7,7,0.36)_52%,rgba(2,7,7,0.62)_100%)]" />
+      <div className="absolute inset-0 bg-grid-dynamic opacity-10 pointer-events-none" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
       <div className="container relative py-16 md:py-24">

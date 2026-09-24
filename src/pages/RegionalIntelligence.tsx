@@ -116,7 +116,7 @@ const RegionalIntelligence = () => {
                   Global XR market metrics & performance vectors
                 </p>
               </div>
-              <div className="ml-auto flex items-center gap-4 bg-white/50 backdrop-blur-md p-1.5 rounded-full border border-black/5">
+              <div className="ml-auto flex items-center gap-4 rounded-full border border-border/60 bg-card/60 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
                 <LiveIndicator label="RT-SYNC" />
               </div>
             </div>

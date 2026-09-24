@@ -47,33 +47,17 @@ export const CustomCursor = () => {
       }}
     >
       <div className="relative h-0 w-0">
-        <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary bg-primary/10"
-          style={{
-            width: isHovering ? 28 : 16,
-            height: isHovering ? 28 : 16,
-            left: 0,
-            top: 0,
-          }}
-        />
-        <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary"
-          style={{
-            width: 2,
-            height: isHovering ? 18 : 12,
-            left: 0,
-            top: 0,
-          }}
-        />
-        <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary"
-          style={{
-            width: isHovering ? 18 : 12,
-            height: 2,
-            left: 0,
-            top: 0,
-          }}
-        />
+        {isHovering ? (
+          <div
+            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary bg-transparent"
+            style={{ width: 22, height: 22, left: 0, top: 0 }}
+          />
+        ) : (
+          <>
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary" style={{ width: 2, height: 18, left: 0, top: 0 }} />
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 bg-primary" style={{ width: 18, height: 2, left: 0, top: 0 }} />
+          </>
+        )}
       </div>
     </div>
   );

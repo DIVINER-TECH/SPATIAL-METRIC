@@ -65,22 +65,31 @@
     color: hsl(var(--foreground));
   }
 
-  body {
+  html, body {
     @apply bg-background text-foreground antialiased;
     font-family: "Outfit", "Inter", system-ui, sans-serif;
     background-image:
       radial-gradient(circle at top, hsl(var(--primary) / 0.15), transparent 26%),
       linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 100%);
     background-color: hsl(var(--background));
-    cursor: none;
+    cursor: none !important;
   }
 
   .bg-card, .bg-secondary, .bg-muted {
     background-color: hsl(var(--card)) !important;
   }
 
-  a, button, [role="button"] {
-    cursor: none;
+  [class*="bg-white/50"], [class*="bg-white/70"], [class*="bg-white/90"], [class*="bg-white/30"] {
+    background-color: hsl(var(--card)) !important;
+    background: hsl(var(--card)) !important;
+  }
+
+  [class*="text-[8px]"], [class*="text-[9px]"] {
+    font-size: 10px !important;
+  }
+
+  a, button, [role="button"], input, textarea, select, summary, [data-radix-collection-item], [data-state="open"] {
+    cursor: none !important;
   }
 
   img {

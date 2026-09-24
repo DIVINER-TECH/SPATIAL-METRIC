@@ -94,7 +94,7 @@ export const ArticleCard = ({ article, variant = 'default', index = 0 }: Article
 
             <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
               {article.category && (
-                <Badge variant="secondary" className="text-[10px] font-mono tracking-[0.2em] font-bold uppercase py-1 px-3 bg-white/80 backdrop-blur-md border-black/5 text-primary-text group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                <Badge className="border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary shadow-[0_0_16px_rgba(170,245,106,0.12)] transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/15">
                   {categoryLabels[article.category]}
                 </Badge>
               )}
