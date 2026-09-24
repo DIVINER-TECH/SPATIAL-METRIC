@@ -67,13 +67,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
-            <ul className="space-y-2">
+            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary mb-6">Resources</h4>
+            <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-foreground/70 hover:text-primary transition-colors"
+                    className="text-[10px] font-mono text-muted-foreground hover:text-primary uppercase tracking-widest transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -83,13 +83,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
-            <ul className="space-y-2">
+            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary mb-6">Corporate</h4>
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-foreground/70 hover:text-primary transition-colors"
+                    className="text-[10px] font-mono text-muted-foreground hover:text-primary uppercase tracking-widest transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -99,12 +99,15 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-foreground/70">
-            © {new Date().getFullYear()} SpatialMetrics. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-sm text-foreground/70">
-            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+        <div className="border-t border-border/30 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-3">
+            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em]">
+              © {new Date().getFullYear()} SpatialMetrics // System Version 4.2.0
+            </p>
+          </div>
+          <div className="flex gap-8 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Protocol</Link>
             <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
           </div>
         </div>

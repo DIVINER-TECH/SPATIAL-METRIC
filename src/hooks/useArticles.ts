@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Tables } from '@/integrations/supabase/types';
 import { 
   articles, 
   getArticlesByCategory, 
@@ -10,6 +11,8 @@ import {
   getArticleBySlug,
   type Article 
 } from '@/data/articles';
+
+type ContentItem = Tables<'content_items'>;
 
 export const useArticles = (category?: Article['category']) => {
   const filteredArticles = useMemo(() => {
@@ -40,23 +43,52 @@ export const useArticle = (slug: string) => {
   const { data: dbArticle } = useQuery({
     queryKey: ['dbArticle', slug],
     queryFn: async () => {
-      // Search content_items for matching slug
-      const { data, error } = await supabase
+      console.log('Searching for article by slug:', slug);
+      
+      // 1. Try the dedicated 'articles' table first (more robust)
+      const { data: articleData, error: articleError } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (articleData) {
+        return {
+          ...articleData,
+          publishedAt: new Date(articleData.published_at),
+          updatedAt: new Date(articleData.updated_at),
+          author: {
+            name: articleData.author_name || 'SpatialMetrics AI',
+            avatar: articleData.author_type === 'ai' ? 'AI' : (articleData.author_name?.charAt(0) || 'A'),
+            title: articleData.author_title || 'Expert Analyst',
+          },
+          category: articleData.category as Article['category'],
+          keyTakeaways: articleData.key_takeaways || [],
+          imageUrl: articleData.image_url || '/placeholder.svg'
+        } as Article;
+      }
+
+      // 2. Fallback to generic 'content_items' if not in dedicated table
+      // We'll fetch more items and be more flexible with slug generation
+      const { data: items, error: itemsError } = await supabase
         .from('content_items')
         .select('*')
         .eq('type', 'article')
         .order('published_at', { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      // Find by slug match
-      const match = (data ?? []).find((item: any) => {
+        .limit(100); 
+
+      if (itemsError) throw itemsError;
+
+      const match = (items ?? []).find((item: ContentItem) => {
         const itemSlug = (item.title as string).toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        return itemSlug === slug;
+        // Check both exact match and partial match if the slug was truncated
+        return itemSlug === slug || itemSlug.startsWith(slug.substring(0, 20));
       });
+
       if (!match) return null;
-      const meta = (match.metadata ?? {}) as Record<string, any>;
+      
+      const meta = (match.metadata ?? {}) as Record<string, unknown>;
       const tags = (match.tags ?? []) as string[];
-      // Infer category from tags
       let category: Article['category'] = 'market-intelligence';
       if (tags.includes('tech-explain')) category = 'tech-explain';
       else if (tags.includes('spatial-updates')) category = 'spatial-updates';
@@ -70,8 +102,8 @@ export const useArticle = (slug: string) => {
         excerpt: match.excerpt || '',
         content: match.content || '',
         category,
-        subcategory: meta.subcategory || 'AI Generated',
-        region: meta.region,
+        subcategory: (meta.subcategory as string) || 'AI Generated',
+        region: meta.region as string | undefined,
         author: {
           name: 'SpatialMetrics AI',
           avatar: 'AI',
@@ -83,12 +115,12 @@ export const useArticle = (slug: string) => {
         trending: false,
         featured: false,
         tags,
-        imageUrl: meta.imageUrl || '/placeholder.svg',
-        keyTakeaways: meta.keyTakeaways || [],
+        imageUrl: (meta.imageUrl as string) || '/placeholder.svg',
+        keyTakeaways: (meta.keyTakeaways as string[]) || [],
         metrics: meta.metrics,
       } as Article;
     },
-    enabled: !staticArticle, // Only query DB if static not found
+    enabled: !staticArticle,
     staleTime: 1000 * 60 * 10,
   });
 

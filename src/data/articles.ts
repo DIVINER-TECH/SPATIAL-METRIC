@@ -52,6 +52,10 @@ Apple's Vision Pro 2, launched in September 2025 at $2,999, represents the most 
 
 ## Market Transformation
 
+[INSIGHT]
+The shift from hardware-only focus to ecosystem-first investment is the primary reason for the 340% increase in enterprise adoption. Apple is essentially selling an "Infinite Office" subscription bundled as a headset.
+[/INSIGHT]
+
 The spatial computing market has undergone a fundamental restructuring since Vision Pro 2's announcement. Total addressable market projections have been revised upward to $142 billion by 2028, representing a 23% increase from pre-launch estimates. Apple's market share in the premium segment now stands at 67%, up from 41% with the first-generation device.
 
 Enterprise adoption has emerged as the primary growth driver. According to a recent survey by Deloitte, 78% of Fortune 500 companies have either deployed or are actively piloting Vision Pro 2 for workplace applications. "We're seeing the fastest enterprise technology adoption cycle since the smartphone," notes Jennifer Martinez, Partner at McKinsey Digital. "Companies that delayed XR investment are now accelerating timelines by 18-24 months."
@@ -67,6 +71,10 @@ Samsung's Android XR partnership with Google has gained momentum. The Galaxy Vis
 Chinese manufacturers have accelerated their efforts. Huawei's HarmonyOS XR platform now supports 4,200 applications, primarily targeting domestic enterprise and education markets. Xiaomi and Oppo have both announced mixed reality devices for 2026, with aggressive pricing expected between $800 and $1,200.
 
 ## Supply Chain and Component Analysis
+
+[NOTE]
+Vertical integration remains Apple's strongest moat. By controlling the Micro-OLED capacity through Sony, they are effectively bottlenecking competitors' ability to scale high-resolution alternatives before 2027.
+[/NOTE]
 
 Apple's vertical integration strategy has created significant competitive moats. The company's exclusive partnership with Sony for micro-OLED displays continues through 2027, with $1.8 billion in committed capacity. TSMC's 3nm production for the M4 chip has expanded specifically for Vision Pro volumes, with Apple representing 23% of 3nm capacity allocation.
 
@@ -93,8 +101,8 @@ Risks include potential regulatory scrutiny in European markets regarding spatia
     subcategory: 'Analysis',
     region: 'Global',
     author: aiAuthor,
-    publishedAt: new Date('2026-02-10'),
-    updatedAt: new Date('2026-02-12'),
+    publishedAt: new Date('2026-03-25'),
+    updatedAt: new Date('2026-03-25'),
     trending: true,
     featured: true,
     tags: ['Apple', 'Vision Pro', 'XR Market', 'Investment', 'Enterprise', 'Spatial Computing'],
@@ -136,6 +144,10 @@ The MENA region demonstrated the fastest percentage growth at 78.4%, reaching $1
 
 ## Sector Analysis and Trends
 
+[INSIGHT]
+The 56% share of "AI-XR" funding indicates that investors are no longer interested in pure visualization. The value proposition has shifted to "Intelligent Perception"—using AI to understand what the user is seeing and provide contextual data.
+[/INSIGHT]
+
 Enterprise productivity applications captured the largest share of investment at $5.52 billion or 30% of total funding. Remote collaboration platforms, workflow automation, and training solutions demonstrated clear ROI metrics that attracted institutional capital. Immersed raised $185 million for its virtual office platform, while Spatial Labs secured $320 million for enterprise content creation tools.
 
 Healthcare and medical training received $3.13 billion in investment. Surgical visualization, therapeutic applications, and medical education platforms showed exceptional growth. Osso VR completed a $145 million Series D for surgical training, and Proprio Vision raised $120 million for AI-enhanced surgical visualization at a $1.4 billion valuation.
@@ -171,8 +183,8 @@ Projections for 2026 indicate global XR investment will reach $24.2 billion as A
     subcategory: 'Funding',
     region: 'Global',
     author: aiAuthor,
-    publishedAt: new Date('2026-02-08'),
-    updatedAt: new Date('2026-02-08'),
+    publishedAt: new Date('2026-03-22'),
+    updatedAt: new Date('2026-03-22'),
     trending: true,
     featured: true,
     tags: ['Funding', 'VC', 'Global', 'Investment', 'AI', 'Venture Capital'],
@@ -249,8 +261,8 @@ Projections indicate US XR investment will reach $10.4 billion in 2026, with ent
     subcategory: 'Regional Analysis',
     region: 'NA',
     author: aiAuthor,
-    publishedAt: new Date('2026-02-06'),
-    updatedAt: new Date('2026-02-06'),
+    publishedAt: new Date('2026-03-20'),
+    updatedAt: new Date('2026-03-20'),
     trending: true,
     featured: false,
     tags: ['USA', 'Investment', 'Enterprise', 'Defense', 'Healthcare', 'Regional'],
@@ -327,8 +339,8 @@ Projections for 2026 indicate European XR investment will reach $4.4 billion as 
     subcategory: 'Regional Analysis',
     region: 'EU',
     author: aiAuthor,
-    publishedAt: new Date('2026-02-04'),
-    updatedAt: new Date('2026-02-04'),
+    publishedAt: new Date('2026-03-18'),
+    updatedAt: new Date('2026-03-18'),
     trending: true,
     featured: false,
     tags: ['Europe', 'Investment', 'Industrial', 'Automotive', 'Manufacturing', 'Germany'],
@@ -411,8 +423,8 @@ Projections indicate ASEAN XR investment will reach $2.6 billion in 2026 as infr
     subcategory: 'Regional Analysis',
     region: 'ASEAN',
     author: aiAuthor,
-    publishedAt: new Date('2026-02-02'),
-    updatedAt: new Date('2026-02-02'),
+    publishedAt: new Date('2026-03-15'),
+    updatedAt: new Date('2026-03-15'),
     trending: true,
     featured: true,
     tags: ['ASEAN', 'Singapore', 'Indonesia', 'Vietnam', 'Gaming', 'Tourism', 'Manufacturing'],

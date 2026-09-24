@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  BarChart3,
   Menu,
   X,
   TrendingUp,
@@ -12,7 +12,9 @@ import {
   Globe,
   Search,
   Rocket,
-  Landmark
+  Landmark,
+  Moon,
+  Sun
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +28,23 @@ const navItems = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
@@ -57,14 +76,14 @@ export function Header() {
             <Search className="h-5 w-5" />
           </Button>
           <Link to="/dashboard">
-            <Button variant="default" className="hidden sm:flex">
-              Dashboard
+            <Button className="hidden sm:flex font-mono text-[10px] uppercase tracking-[0.2em] px-6 h-9 rounded-full bg-primary text-black hover:bg-primary/80 shadow-[0_0_15px_rgba(var(--primary),0.4)] transition-all border-none">
+              Access Terminal
             </Button>
           </Link>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-foreground/80 hover:text-foreground"
+            className="lg:hidden hover:bg-primary/5 rounded-full"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -72,26 +91,30 @@ export function Header() {
         </div>
       </div>
 
-      {isMenuOpen && (
-        <div className="lg:hidden border-t border-border/70 bg-background/95 backdrop-blur-xl">
-          <nav className="container py-4 flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-md hover:bg-secondary/80"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <item.icon className="h-5 w-5" />
-                {item.label}
-              </Link>
-            ))}
-            <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full mt-2">Dashboard</Button>
-            </Link>
-          </nav>
-        </div>
-      )}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden border-t border-primary/10 bg-background/95 backdrop-blur-2xl overflow-hidden"
+          >
+            <nav className="container py-8 flex flex-col gap-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="flex items-center gap-4 px-6 py-4 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all rounded-xl border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

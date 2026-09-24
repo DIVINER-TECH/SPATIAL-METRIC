@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LiveIndicator } from '@/components/shared/LiveIndicator';
@@ -10,85 +11,136 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, BarChart3, Globe, MapPin } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Globe, MapPin, RefreshCw, Activity } from 'lucide-react';
 import { regionalData, getRegionalComparison } from '@/data/regions';
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/shared/CountUp";
+import { RegionalIntelligenceMap } from "@/components/intelligence/RegionalIntelligenceMap";
 
 const RegionalCard = ({ region }: { region: typeof regionalData[0] }) => {
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(1)}B`;
-    return `$${amount}M`;
+  const formatCurrencyValue = (amount: number) => {
+    if (amount >= 1000) return amount / 1000;
+    return amount;
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium">{region.displayName}</CardTitle>
-          <Badge className={region.yoyGrowth > 30 ? 'bg-success/20 text-success' : 'bg-primary/20 text-primary'}>
-            <TrendingUp className="h-3 w-3 mr-1" />
-            {region.yoyGrowth}% YoY
-          </Badge>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="h-full glass-premium border-black/5 overflow-hidden relative shadow-sm">
+        <div className="absolute top-0 right-0 p-4 opacity-10">
+          <Globe className="h-24 w-24 text-primary" />
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Total Investment</p>
-            <p className="text-xl font-semibold">{formatCurrency(region.totalInvestment)}</p>
+        
+        <CardHeader className="pb-3 border-b border-black/5 bg-black/[0.03]">
+          <div className="flex items-center justify-between relative z-10">
+            <CardTitle className="text-sm font-mono uppercase tracking-[0.3em] font-bold">{region.displayName}</CardTitle>
+            <Badge className={`font-mono text-[10px] uppercase tracking-tighter ${region.yoyGrowth > 30 ? 'bg-primary text-black' : 'bg-white text-primary border border-primary/30'}`}>
+              <TrendingUp className="h-3 w-3 mr-1" />
+              {region.yoyGrowth}% YoY
+            </Badge>
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">Deal Count</p>
-            <p className="text-xl font-semibold">{region.dealCount}</p>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6 relative z-10">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-secondary/50 dark:bg-muted/20 p-4 rounded-xl border border-black/5 dark:border-white/5">
+              <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-1">Total Investment</p>
+              <div className="text-2xl font-bold font-mono tracking-tighter text-primary-text">
+                <CountUp 
+                  value={formatCurrencyValue(region.totalInvestment)} 
+                  prefix="$" 
+                  suffix={region.totalInvestment >= 1000 ? "B" : "M"} 
+                  decimals={region.totalInvestment >= 1000 ? 1 : 0} 
+                />
+              </div>
+            </div>
+            <div className="bg-secondary/50 dark:bg-muted/20 p-4 rounded-xl border border-black/5 dark:border-white/5">
+              <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-1">Deal Count</p>
+              <div className="text-2xl font-bold font-mono tracking-tighter text-foreground">
+                <CountUp value={region.dealCount} />
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-2 bg-muted/50 rounded">
-            <p className="text-xs text-muted-foreground">Unicorns</p>
-            <p className="text-sm font-medium">{region.unicornCount}</p>
-          </div>
-          <div className="text-center p-2 bg-muted/50 rounded">
-            <p className="text-xs text-muted-foreground">Active VCs</p>
-            <p className="text-sm font-medium">{region.activeVCs}</p>
-          </div>
-          <div className="text-center p-2 bg-muted/50 rounded">
-            <p className="text-xs text-muted-foreground">Adoption</p>
-            <p className="text-sm font-medium">{region.adoptionRate}%</p>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-xs text-muted-foreground mb-2">Top Sectors</p>
-          <div className="flex flex-wrap gap-1">
-            {region.topSectors.slice(0, 4).map(sector => (
-              <Badge key={sector} variant="secondary" className="text-xs">{sector}</Badge>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: 'Unicorns', val: region.unicornCount },
+              { label: 'Active VCs', val: region.activeVCs },
+              { label: 'Adoption', val: `${region.adoptionRate}%` }
+            ].map((stat, i) => (
+              <div key={i} className="text-center p-3 bg-black/[0.03] border border-black/5 rounded-xl">
+                <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-sm font-bold font-mono text-primary-text">{stat.val}</p>
+              </div>
             ))}
           </div>
-        </div>
 
-        <div>
-          <p className="text-xs text-muted-foreground mb-2">Key Players</p>
-          <p className="text-sm">{region.keyPlayers.slice(0, 3).join(', ')}</p>
-        </div>
+          <div>
+            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+              <Activity className="h-3 w-3 text-primary" />
+              Strategic Sectors
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {region.topSectors.map(sector => (
+                <Badge key={sector} variant="outline" className="text-[9px] font-mono uppercase tracking-tighter bg-primary/5 border-primary/20 text-primary px-3 py-1">
+                  {sector}
+                </Badge>
+              ))}
+            </div>
+          </div>
 
-        <div>
-          <p className="text-xs text-muted-foreground mb-2">Emerging Startups</p>
-          <p className="text-sm">{region.emergingStartups.slice(0, 3).join(', ')}</p>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="pt-4 border-t border-black/5 space-y-3">
+            <div className="flex justify-between items-start">
+              <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">Key Players</p>
+              <p className="text-[10px] font-mono font-bold text-right max-w-[150px]">{region.keyPlayers.slice(0, 3).join(', ')}</p>
+            </div>
+            <div className="flex justify-between items-start">
+              <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">Emerging</p>
+              <p className="text-[10px] font-mono font-bold text-primary text-right max-w-[150px]">{region.emergingStartups.slice(0, 3).join(', ')}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
 const MarketIntelligence = () => {
-  const { articles: contentItems } = useHybridArticles('market-intelligence', 9);
-  const { data: snapshot } = useMarketSnapshot();
+  const { articles: contentItems, isLoading: isLoadingArticles } = useHybridArticles('market-intelligence', 9);
+  const { data: snapshot, isLoading: isLoadingSnapshot } = useMarketSnapshot();
+  const queryClient = useQueryClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [activeRegion, setActiveRegion] = useState('global');
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      const { error } = await supabase.functions.invoke("daily-pipeline", {
+        body: { triggered_by: "manual_intelligence" },
+      });
+      if (error) throw error;
+      toast.success("Market data pipeline triggered successfully");
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["marketSnapshot"] });
+        queryClient.invalidateQueries({ queryKey: ["contentItems"] });
+      }, 5000);
+    } catch (error) {
+      console.error("Failed to trigger pipeline:", error);
+      toast.error("Failed to trigger data refresh");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const growthComparison = getRegionalComparison('yoyGrowth');
   const maxGrowth = Math.max(...growthComparison.map(r => r.value));
-
   const selectedRegion = regionalData.find(r => r.regionCode === activeRegion) || regionalData[0];
 
   const companies = snapshot?.topCompanies ?? [];
@@ -100,207 +152,270 @@ const MarketIntelligence = () => {
   const totalVolume = companies.reduce((sum, c) => sum + c.volume, 0);
 
   const dailyMetrics = [
-    {
-      label: 'Tracked Companies',
-      value: companies.length > 0 ? `${companies.length}` : '—',
-      change: '',
-      positive: true
-    },
-    {
-      label: 'Average Daily Move',
-      value: companies.length > 0 ? `${avgChange.toFixed(2)}%` : '—',
-      change: companies.length > 0 ? `${avgChange >= 0 ? '+' : ''}${avgChange.toFixed(2)}%` : '',
-      positive: avgChange >= 0
-    },
-    {
-      label: 'Gainers / Losers',
-      value: companies.length > 0 ? `${gainers} / ${losers}` : '—',
-      change: '',
-      positive: gainers >= losers
-    },
-    {
-      label: 'Total Volume',
-      value: companies.length > 0 ? `${totalVolume.toLocaleString()}` : '—',
-      change: '',
-      positive: true
-    },
+    { label: 'Tracked Assets', value: companies.length, raw: companies.length, status: 'AI SYNCHRONIZING', prefix: '', suffix: '', decimals: 0, positive: true },
+    { label: 'Market Velocity', value: avgChange, raw: avgChange, status: 'PENDING', prefix: '', suffix: '%', decimals: 2, positive: avgChange >= 0 },
+    { label: 'Gainers Bias', value: gainers, raw: gainers, status: 'SCANNING', prefix: '', suffix: ' UP', decimals: 0, positive: true },
+    { label: 'Signal Volume', value: totalVolume, raw: totalVolume, status: 'LOADING', prefix: '', suffix: '', decimals: 0, positive: true },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Header />
-      <main className="flex-1">
-        <section className="py-10 border-b border-border/50">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center gap-3 mb-4">
-              <BarChart3 className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl md:text-4xl font-semibold">Market Intelligence</h1>
-              <LiveIndicator label="Daily" />
+      
+      <main className="flex-1 relative z-10 px-4 md:px-8">
+        {/* HUD Sub-Navigation/Header */}
+        <section className="py-12 relative">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="h-14 w-14 rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center"
+                >
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                </motion.div>
+                <div>
+                  <h1 className="text-5xl font-bold font-mono tracking-tighter uppercase leading-none">
+                    Intelligence<span className="text-primary">.OS</span>
+                  </h1>
+                  <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.5em] mt-2">
+                    Spatial Computing & Metaverse Market Analytics
+                  </p>
+                </div>
+              </div>
             </div>
-            <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
-              Deep analysis of XR market dynamics, investment trends, valuations, and strategic insights for spatial computing investors. Regional analysis is curated and may not update daily.
-            </p>
-            {snapshot?.asOfDate ? (
-              <p className="text-xs text-muted-foreground mt-2">
-                Last updated: {new Date(snapshot.asOfDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </p>
+
+            <div className="flex items-center gap-4 bg-white/50 backdrop-blur-md p-2 rounded-full border border-black/5 shadow-sm">
+              <Button 
+                onClick={handleRefresh} 
+                disabled={isRefreshing}
+                className={`gap-3 font-mono text-[10px] uppercase tracking-widest rounded-full h-10 px-6 transition-all ${
+                  isRefreshing ? "bg-muted cursor-not-allowed" : "bg-primary text-black hover:bg-primary/80 shadow-[0_0_20px_rgba(var(--primary),0.3)]"
+                }`}
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+                {isRefreshing ? "SYNCING DATA..." : "CALIBRATE SYSTEM"}
+              </Button>
+              <LiveIndicator label="RT-STREAM" />
+            </div>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            {isLoadingSnapshot ? (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-4 p-8 glass-premium border-primary/30 rounded-2xl animate-pulse"
+              >
+                <div className="h-4 w-4 rounded-full bg-primary animate-ping" />
+                <span className="text-sm font-mono text-primary uppercase tracking-[0.3em] font-bold">
+                  Establishing Neural Link with Global Exchanges...
+                </span>
+              </motion.div>
             ) : (
-              <p className="text-xs text-muted-foreground mt-2">
-                No daily snapshot found. Deploy and run the `daily-market-snapshot` function to populate data.
-              </p>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              >
+                {dailyMetrics.map((metric, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <Card className="glass-premium border-black h-full group hover:border-primary/50 transition-all cursor-crosshair overflow-hidden">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                      <CardContent className="p-5">
+                        <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest mb-3 flex items-center justify-between">
+                          {metric.label}
+                          <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
+                        </p>
+                        <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
+                          {companies.length > 0 ? (
+                            <CountUp 
+                              value={metric.raw} 
+                              decimals={metric.decimals} 
+                              prefix={metric.prefix} 
+                              suffix={metric.suffix} 
+                            />
+                          ) : metric.status}
+                        </div>
+                        {metric.value !== 0 && metric.label === 'Market Velocity' && (
+                          <div className={`flex items-center gap-1 text-[10px] font-mono uppercase mt-2 ${metric.positive ? 'text-primary-text' : 'text-destructive'}`}>
+                            {metric.positive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                            {metric.value >= 0 ? '+' : ''}{metric.value.toFixed(2)}%
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </section>
 
-        {/* Daily Metrics */}
-        <section className="py-6 border-b border-border/50 bg-muted/20">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {dailyMetrics.map((metric, i) => (
-                <Card key={i} className="bg-card/50">
-                  <CardContent className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">{metric.label}</p>
-                    <p className="text-lg font-semibold">{metric.value}</p>
-                    {metric.change ? (
-                      <div className={`flex items-center gap-1 text-xs ${metric.positive ? 'text-success' : 'text-destructive'}`}>
-                        {metric.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                        {metric.change}
-                      </div>
-                    ) : null}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Main Content with Tabs */}
-        <section className="py-10">
-          <div className="container mx-auto px-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-8">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="regional">Regional Analysis</TabsTrigger>
+        {/* Intelligence Grid */}
+        <section className="py-20 border-t border-black">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="flex items-center justify-between mb-16 flex-wrap gap-6">
+              <TabsList className="bg-white/50 backdrop-blur-md border border-black/5 p-1.5 rounded-full scale-110 origin-left shadow-sm">
+                <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-black font-mono text-[10px] uppercase tracking-widest px-10 h-10 rounded-full transition-all">TERMINAL FEED</TabsTrigger>
+                <TabsTrigger value="regional" className="data-[state=active]:bg-primary data-[state=active]:text-black font-mono text-[10px] uppercase tracking-widest px-10 h-10 rounded-full transition-all">REGIONAL MATRIX</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="mt-0">
-                <div className="grid lg:grid-cols-4 gap-8">
-                  <div className="lg:col-span-3">
-                    <h2 className="text-xl font-medium mb-6">Latest Insights</h2>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {contentItems && contentItems.length > 0 ? (
-                        contentItems.map(item => (
-                          <ArticleCard key={item.id} article={item} />
-                        ))
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No AI insights published yet.</p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <AIInsightsFeed />
+              <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/30 to-transparent hidden md:block mx-8" />
 
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base font-medium flex items-center gap-2">
-                          <Globe className="h-4 w-4 text-primary" />
-                          Regional Growth
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        {growthComparison.slice(0, 5).map((region, i) => (
-                          <div key={i}>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>{region.region}</span>
-                              <span className="text-primary">{region.value}%</span>
-                            </div>
-                            <Progress value={(region.value / maxGrowth) * 100} className="h-2" />
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
+              <div className="flex items-center gap-2 px-6 py-2 rounded-full border border-primary/20 bg-primary/5">
+                <Globe className="h-4 w-4 text-primary animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary-text font-bold">Active Nodes: 124/124</span>
+              </div>
+            </div>
+
+            <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
+              <div className="grid lg:grid-cols-4 gap-12">
+                <div className="lg:col-span-3 space-y-12">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {isLoadingArticles ? (
+                      Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-[400px] glass-premium border-black animate-pulse rounded-2xl" />
+                      ))
+                    ) : (
+                      contentItems?.map((article, i) => (
+                        <ArticleCard key={article.id} article={article} index={i} />
+                      ))
+                    )}
                   </div>
                 </div>
-              </TabsContent>
 
-              <TabsContent value="regional" className="mt-0">
-                <div className="grid lg:grid-cols-4 gap-8">
-                  <div className="lg:col-span-3">
-                    <div className="flex items-center gap-2 mb-6 flex-wrap">
-                      {regionalData.map(region => (
-                        <Badge
-                          key={region.regionCode}
-                          variant={activeRegion === region.regionCode ? 'default' : 'outline'}
-                          className="cursor-pointer text-xs"
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  className="space-y-10"
+                >
+                  <AIInsightsFeed />
+
+                  <Card className="glass-premium border-black/5 overflow-hidden shadow-sm">
+                    <CardHeader className="pb-4 border-b border-black/5 bg-black/[0.02]">
+                      <CardTitle className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold flex items-center gap-3">
+                        <TrendingUp className="h-4 w-4 text-primary" />
+                        GVA Growth Momentum
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6 pt-8">
+                      {growthComparison.slice(0, 5).map((region, i) => (
+                        <motion.div 
+                          key={i} 
+                          initial={{ width: 0 }}
+                          whileInView={{ width: "100%" }}
+                          className="group space-y-2"
+                        >
+                          <div className="flex justify-between text-[10px] font-mono uppercase tracking-tight">
+                            <span className="text-muted-foreground group-hover:text-primary transition-colors">{region.region}</span>
+                            <span className="text-primary font-bold">{region.value}%</span>
+                          </div>
+                          <Progress value={(region.value / maxGrowth) * 100} className="h-1 bg-primary/10" />
+                        </motion.div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="regional" className="mt-0 focus-visible:outline-none">
+              <div className="grid lg:grid-cols-4 gap-12">
+                <div className="lg:col-span-3 space-y-10">
+                  <RegionalIntelligenceMap 
+                    activeRegion={activeRegion} 
+                    onRegionChange={setActiveRegion} 
+                  />
+
+                  <div className="flex items-center gap-2 p-2 rounded-full bg-secondary/80 dark:bg-muted/20 border border-black/5 dark:border-white/5 w-fit mt-10">
+                    {regionalData.map(region => (
+                      <button
+                        key={region.regionCode}
+                        className={`text-[9px] font-mono uppercase tracking-widest px-6 py-2.5 rounded-full transition-all ${
+                          activeRegion === region.regionCode 
+                            ? 'bg-primary text-black font-bold shadow-[0_0_15px_rgba(var(--primary),0.2)]' 
+                            : 'text-muted-foreground hover:text-white'
+                        }`}
+                        onClick={() => setActiveRegion(region.regionCode)}
+                      >
+                        {region.region}
+                      </button>
+                    ))}
+                  </div>
+
+                  <RegionalCard region={selectedRegion} />
+                  
+                  <Card className="glass-premium border-black mt-12">
+                    <CardHeader className="pb-4 border-b border-black bg-black/40">
+                      <CardTitle className="text-[10px] font-mono uppercase tracking-widest font-bold">Timeline Velocity: Quarterly Intelligence</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-10">
+                      <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+                        {selectedRegion.quarterlyData.map((q, i) => (
+                          <div key={i} className="group p-4 bg-secondary/30 dark:bg-muted/10 rounded-xl border border-black/5 dark:border-white/5 hover:border-primary/30 transition-all">
+                            <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest mb-3">
+                              <span className="text-primary font-bold">{q.quarter}</span>
+                              <span className="text-muted-foreground">DEALS: {q.deals}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="text-xl font-bold font-mono tracking-tighter text-foreground">${q.investment}M</span>
+                              <Progress value={(q.investment / 1500) * 100} className="h-1.5 flex-1 bg-black/5 dark:bg-white/5" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="space-y-10">
+                  <AIInsightsFeed />
+                  <Card className="glass-premium border-black/5 dark:bg-muted/10 overflow-hidden shadow-2xl">
+                    <CardHeader className="pb-4 border-b border-black/5 bg-secondary/30 dark:bg-muted/20">
+                      <CardTitle className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold text-foreground">Node Connectivity</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
+                      {regionalData.filter(r => r.regionCode !== 'global').map((region, i) => (
+                        <motion.div
+                          key={i}
+                          whileHover={{ x: 5 }}
+                          className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+                            activeRegion === region.regionCode 
+                              ? 'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.1)]' 
+                              : 'bg-secondary/50 dark:bg-muted/10 border-black/5 dark:border-white/10 hover:border-primary/20'
+                          }`}
                           onClick={() => setActiveRegion(region.regionCode)}
                         >
-                          {region.region}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    <RegionalCard region={selectedRegion} />
-
-                    {/* Quarterly Data */}
-                    <Card className="mt-6">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base font-medium">Quarterly Investment Trend (2025)</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          {selectedRegion.quarterlyData.map((q, i) => (
-                            <div key={i}>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span>{q.quarter}</span>
-                                <span className="text-muted-foreground">${q.investment}M / {q.deals} deals</span>
-                              </div>
-                              <Progress
-                                value={(q.investment / Math.max(...selectedRegion.quarterlyData.map(d => d.investment))) * 100}
-                                className="h-2"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <div className="space-y-6">
-                    <AIInsightsFeed />
-
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base font-medium">All Regions Overview</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        {regionalData.filter(r => r.regionCode !== 'global').map((region, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center justify-between p-2 rounded hover:bg-muted/50 cursor-pointer transition-colors"
-                            onClick={() => setActiveRegion(region.regionCode)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm">{region.region}</span>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-sm font-medium">${(region.totalInvestment / 1000).toFixed(1)}B</p>
-                              <p className={`text-xs ${region.yoyGrowth > 30 ? 'text-success' : 'text-primary'}`}>
-                                +{region.yoyGrowth}%
-                              </p>
-                            </div>
+                          <div className="flex items-center gap-3">
+                            <div className={`h-2 w-2 rounded-full ${activeRegion === region.regionCode ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+                            <span className="text-[11px] font-mono font-bold uppercase tracking-widest">{region.region}</span>
                           </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  </div>
+                          <div className="text-right">
+                            <p className="text-sm font-bold font-mono tracking-tighter text-primary">${(region.totalInvestment / 1000).toFixed(1)}B</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </CardContent>
+                  </Card>
                 </div>
-              </TabsContent>
-
-            </Tabs>
-          </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </section>
       </main>
+
       <Footer />
     </div>
   );
