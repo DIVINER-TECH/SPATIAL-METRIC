@@ -28,7 +28,8 @@ import ApiAccess from "./pages/ApiAccess";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "./utils/supabase";
 
 const getStoredTheme = () => {
   const saved = localStorage.getItem("theme");
@@ -56,6 +57,25 @@ const AnimatedRoutes = () => {
     document.documentElement.classList.toggle("dark", currentTheme === "dark");
     document.documentElement.style.colorScheme = currentTheme;
   }, []);
+
+  // Example: fetch a `todos` table if present (non-blocking)
+  const [todos, setTodos] = useState<any[]>([])
+
+  useEffect(() => {
+    let mounted = true
+    async function loadTodos() {
+      try {
+        const { data } = await supabase.from('todos').select()
+        if (mounted && data) setTodos(data as any[])
+      } catch (e) {
+        // ignore if table doesn't exist or permissions denied
+        console.debug('supabase todos fetch failed', e)
+      }
+    }
+
+    loadTodos()
+    return () => { mounted = false }
+  }, [])
   
   return (
     <div 
@@ -115,6 +135,17 @@ const AnimatedRoutes = () => {
           </Routes>
         </motion.div>
       </AnimatePresence>
+      {/* If `todos` were fetched, render a minimal list for debugging */}
+      {todos.length > 0 && (
+        <div className="fixed bottom-4 right-4 z-50 p-2 bg-muted rounded-md text-sm">
+          <strong>Todos:</strong>
+          <ul>
+            {todos.slice(0,3).map((t) => (
+              <li key={t.id}>{t.name ?? t.title ?? JSON.stringify(t)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
