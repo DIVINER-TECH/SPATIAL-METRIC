@@ -38,7 +38,7 @@
 
 3. Configure environment variables in `.env`:
    - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `MARKET_DATA_PROVIDER=yahoo`
 
