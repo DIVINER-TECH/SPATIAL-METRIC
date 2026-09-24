@@ -83,7 +83,7 @@ const AnimatedRoutes = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="relative z-10"
+          className="relative z-10 pt-24"
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
