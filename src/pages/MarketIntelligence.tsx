@@ -219,20 +219,36 @@ const MarketIntelligence = () => {
                             {metric.label}
                             <span className="h-1 w-1 rounded-full bg-primary/40 animate-pulse" />
                           </p>
-                          <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
-                            {companies.length > 0 ? (
-                              <CountUp 
-                                value={metric.raw} 
-                                decimals={metric.decimals} 
-                                prefix={metric.prefix} 
-                                suffix={metric.suffix} 
-                              />
-                            ) : metric.status}
-                          </div>
-                          {metric.value !== 0 && metric.label === 'Market Velocity' && (
-                            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase mt-2 ${metric.positive ? 'text-primary-text' : 'text-destructive'}`}>
-                              {metric.positive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-                              {metric.value >= 0 ? '+' : ''}{metric.value.toFixed(2)}%
+                          {metric.label === 'Market Velocity' ? (
+                            <div className="flex items-end justify-between gap-3">
+                              <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
+                                {companies.length > 0 ? (
+                                  <CountUp 
+                                    value={metric.raw} 
+                                    decimals={metric.decimals} 
+                                    prefix={metric.prefix} 
+                                    suffix={metric.suffix} 
+                                  />
+                                ) : metric.status}
+                              </div>
+
+                              {metric.value !== 0 && (
+                                <div className={`flex items-center gap-1 text-[10px] font-mono uppercase ${metric.positive ? 'text-primary-text' : 'text-destructive'}`}>
+                                  {metric.positive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                                  {metric.value >= 0 ? '+' : ''}{metric.value.toFixed(2)}%
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-2xl font-bold font-mono tracking-tighter group-hover:text-primary transition-colors">
+                              {companies.length > 0 ? (
+                                <CountUp 
+                                  value={metric.raw} 
+                                  decimals={metric.decimals} 
+                                  prefix={metric.prefix} 
+                                  suffix={metric.suffix} 
+                                />
+                              ) : metric.status}
                             </div>
                           )}
                         </CardContent>
