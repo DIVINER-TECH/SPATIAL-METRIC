@@ -246,36 +246,37 @@ const MarketIntelligence = () => {
 
         {/* Intelligence Grid */}
         <section className="py-20 border-t border-black">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex items-center justify-between mb-16 flex-wrap gap-6">
-              <TabsList className="border border-primary/20 bg-card/60 p-1.5 rounded-full scale-110 origin-left shadow-[0_12px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                <TabsTrigger value="overview" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">TERMINAL FEED</TabsTrigger>
-                <TabsTrigger value="regional" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">REGIONAL MATRIX</TabsTrigger>
-              </TabsList>
+          <div className="container mx-auto px-4 md:px-6 lg:px-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="flex items-center justify-between mb-16 flex-wrap gap-6">
+                <TabsList className="border border-primary/20 bg-card/60 p-1.5 rounded-full scale-110 origin-left shadow-[0_12px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
+                  <TabsTrigger value="overview" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">TERMINAL FEED</TabsTrigger>
+                  <TabsTrigger value="regional" className="h-10 rounded-full px-10 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-all data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_16px_rgba(170,245,106,0.18)]">REGIONAL MATRIX</TabsTrigger>
+                </TabsList>
 
-              <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/30 to-transparent hidden md:block mx-8" />
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/30 to-transparent hidden md:block mx-8" />
 
-              <div className="flex items-center gap-2 px-6 py-2 rounded-full border border-primary/20 bg-primary/5">
-                <Globe className="h-4 w-4 text-primary animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary-text font-bold">Active Nodes: 124/124</span>
-              </div>
-            </div>
-
-            <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
-              <div className="grid lg:grid-cols-4 gap-12">
-                <div className="lg:col-span-3 space-y-12">
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {isLoadingArticles ? (
-                      Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-[400px] glass-premium border-black animate-pulse rounded-2xl" />
-                      ))
-                    ) : (
-                      contentItems?.map((article, i) => (
-                        <ArticleCard key={article.id} article={article} index={i} />
-                      ))
-                    )}
-                  </div>
+                <div className="flex items-center gap-2 px-6 py-2 rounded-full border border-primary/20 bg-primary/5">
+                  <Globe className="h-4 w-4 text-primary animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary-text font-bold">Active Nodes: 124/124</span>
                 </div>
+              </div>
+
+              <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
+                <div className="grid lg:grid-cols-4 gap-12">
+                  <div className="lg:col-span-3 space-y-12">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {isLoadingArticles ? (
+                        Array.from({ length: 6 }).map((_, i) => (
+                          <div key={i} className="h-[400px] glass-premium border-black animate-pulse rounded-2xl" />
+                        ))
+                      ) : (
+                        contentItems?.map((article, i) => (
+                          <ArticleCard key={article.id} article={article} index={i} />
+                        ))
+                      )}
+                    </div>
+                  </div>
 
                 <motion.div 
                   initial={{ opacity: 0, x: 20 }}
@@ -312,88 +313,89 @@ const MarketIntelligence = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="regional" className="mt-0 focus-visible:outline-none">
-              <div className="grid lg:grid-cols-4 gap-12">
-                <div className="lg:col-span-3 space-y-10">
-                  <RegionalIntelligenceMap 
-                    activeRegion={activeRegion} 
-                    onRegionChange={setActiveRegion} 
-                  />
+              <TabsContent value="regional" className="mt-0 focus-visible:outline-none">
+                <div className="grid lg:grid-cols-4 gap-12">
+                  <div className="lg:col-span-3 space-y-10">
+                    <RegionalIntelligenceMap 
+                      activeRegion={activeRegion} 
+                      onRegionChange={setActiveRegion} 
+                    />
 
-                  <div className="flex items-center gap-2 p-2 rounded-full bg-secondary/80 dark:bg-muted/20 border border-black/5 dark:border-white/5 w-fit mt-10">
-                    {regionalData.map(region => (
-                      <button
-                        key={region.regionCode}
-                        className={`text-[9px] font-mono uppercase tracking-widest px-6 py-2.5 rounded-full transition-all ${
-                          activeRegion === region.regionCode 
-                            ? 'bg-primary text-black font-bold shadow-[0_0_15px_rgba(var(--primary),0.2)]' 
-                            : 'text-muted-foreground hover:text-white'
-                        }`}
-                        onClick={() => setActiveRegion(region.regionCode)}
-                      >
-                        {region.region}
-                      </button>
-                    ))}
-                  </div>
-
-                  <RegionalCard region={selectedRegion} />
-                  
-                  <Card className="glass-premium border-black mt-12">
-                    <CardHeader className="pb-4 border-b border-black bg-black/40">
-                      <CardTitle className="text-[10px] font-mono uppercase tracking-widest font-bold">Timeline Velocity: Quarterly Intelligence</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-10">
-                      <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
-                        {selectedRegion.quarterlyData.map((q, i) => (
-                          <div key={i} className="group p-4 bg-secondary/30 dark:bg-muted/10 rounded-xl border border-black/5 dark:border-white/5 hover:border-primary/30 transition-all">
-                            <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest mb-3">
-                              <span className="text-primary font-bold">{q.quarter}</span>
-                              <span className="text-muted-foreground">DEALS: {q.deals}</span>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <span className="text-xl font-bold font-mono tracking-tighter text-foreground">${q.investment}M</span>
-                              <Progress value={(q.investment / 1500) * 100} className="h-1.5 flex-1 bg-black/5 dark:bg-white/5" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="space-y-10">
-                  <AIInsightsFeed />
-                  <Card className="glass-premium border-black/5 dark:bg-muted/10 overflow-hidden shadow-2xl">
-                    <CardHeader className="pb-4 border-b border-black/5 bg-secondary/30 dark:bg-muted/20">
-                      <CardTitle className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold text-foreground">Node Connectivity</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 pt-6">
-                      {regionalData.filter(r => r.regionCode !== 'global').map((region, i) => (
-                        <motion.div
-                          key={i}
-                          whileHover={{ x: 5 }}
-                          className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+                    <div className="flex items-center gap-2 p-2 rounded-full bg-secondary/80 dark:bg-muted/20 border border-black/5 dark:border-white/5 w-fit mt-10">
+                      {regionalData.map(region => (
+                        <button
+                          key={region.regionCode}
+                          className={`text-[9px] font-mono uppercase tracking-widest px-6 py-2.5 rounded-full transition-all ${
                             activeRegion === region.regionCode 
-                              ? 'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.1)]' 
-                              : 'bg-secondary/50 dark:bg-muted/10 border-black/5 dark:border-white/10 hover:border-primary/20'
+                              ? 'bg-primary text-black font-bold shadow-[0_0_15px_rgba(var(--primary),0.2)]' 
+                              : 'text-muted-foreground hover:text-white'
                           }`}
                           onClick={() => setActiveRegion(region.regionCode)}
                         >
-                          <div className="flex items-center gap-3">
-                            <div className={`h-2 w-2 rounded-full ${activeRegion === region.regionCode ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-widest">{region.region}</span>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-bold font-mono tracking-tighter text-primary">${(region.totalInvestment / 1000).toFixed(1)}B</p>
-                          </div>
-                        </motion.div>
+                          {region.region}
+                        </button>
                       ))}
-                    </CardContent>
-                  </Card>
+                    </div>
+
+                    <RegionalCard region={selectedRegion} />
+                    
+                    <Card className="glass-premium border-black mt-12">
+                      <CardHeader className="pb-4 border-b border-black bg-black/40">
+                        <CardTitle className="text-[10px] font-mono uppercase tracking-widest font-bold">Timeline Velocity: Quarterly Intelligence</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-10">
+                        <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+                          {selectedRegion.quarterlyData.map((q, i) => (
+                            <div key={i} className="group p-4 bg-secondary/30 dark:bg-muted/10 rounded-xl border border-black/5 dark:border-white/5 hover:border-primary/30 transition-all">
+                              <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest mb-3">
+                                <span className="text-primary font-bold">{q.quarter}</span>
+                                <span className="text-muted-foreground">DEALS: {q.deals}</span>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <span className="text-xl font-bold font-mono tracking-tighter text-foreground">${q.investment}M</span>
+                                <Progress value={(q.investment / 1500) * 100} className="h-1.5 flex-1 bg-black/5 dark:bg-white/5" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="space-y-10">
+                    <AIInsightsFeed />
+                    <Card className="glass-premium border-black/5 dark:bg-muted/10 overflow-hidden shadow-2xl">
+                      <CardHeader className="pb-4 border-b border-black/5 bg-secondary/30 dark:bg-muted/20">
+                        <CardTitle className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold text-foreground">Node Connectivity</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4 pt-6">
+                        {regionalData.filter(r => r.regionCode !== 'global').map((region, i) => (
+                          <motion.div
+                            key={i}
+                            whileHover={{ x: 5 }}
+                            className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+                              activeRegion === region.regionCode 
+                                ? 'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.1)]' 
+                                : 'bg-secondary/50 dark:bg-muted/10 border-black/5 dark:border-white/10 hover:border-primary/20'
+                            }`}
+                            onClick={() => setActiveRegion(region.regionCode)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`h-2 w-2 rounded-full ${activeRegion === region.regionCode ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+                              <span className="text-[11px] font-mono font-bold uppercase tracking-widest">{region.region}</span>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-bold font-mono tracking-tighter text-primary">${(region.totalInvestment / 1000).toFixed(1)}B</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+              </TabsContent>
+            </Tabs>
+          </div>
         </section>
       </main>
 
