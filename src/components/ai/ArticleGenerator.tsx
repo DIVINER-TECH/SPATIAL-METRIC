@@ -21,6 +21,8 @@ export const ArticleGenerator = () => {
   const [topic, setTopic] = useState('');
   const [category, setCategory] = useState('market-intelligence');
   const [region, setRegion] = useState('Global');
+  const [industry, setIndustry] = useState('Spatial Computing');
+  const [sector, setSector] = useState('Enterprise Applications');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedArticle, setGeneratedArticle] = useState<GeneratedArticle | null>(null);
 
@@ -40,6 +42,8 @@ export const ArticleGenerator = () => {
           topic,
           category,
           region,
+          industry,
+          sector,
           searchResults: undefined // Placeholder for live search data injection
         }
       });
@@ -104,12 +108,48 @@ export const ArticleGenerator = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Global">Global</SelectItem>
-                  <SelectItem value="NA">North America</SelectItem>
-                  <SelectItem value="EU">Europe</SelectItem>
+                  <SelectItem value="North America">North America</SelectItem>
+                  <SelectItem value="Europe">Europe</SelectItem>
                   <SelectItem value="ASEAN">ASEAN</SelectItem>
                   <SelectItem value="Pacific">Pacific</SelectItem>
                   <SelectItem value="South Asia">South Asia</SelectItem>
                   <SelectItem value="MENA">MENA</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Industry</label>
+              <Select value={industry} onValueChange={setIndustry}>
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Spatial Computing">Spatial Computing</SelectItem>
+                  <SelectItem value="XR Hardware">XR Hardware</SelectItem>
+                  <SelectItem value="Enterprise XR">Enterprise XR</SelectItem>
+                  <SelectItem value="Healthcare XR">Healthcare XR</SelectItem>
+                  <SelectItem value="Industrial XR">Industrial XR</SelectItem>
+                  <SelectItem value="Gaming XR">Gaming XR</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Sector</label>
+              <Select value={sector} onValueChange={setSector}>
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Enterprise Applications">Enterprise Applications</SelectItem>
+                  <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                  <SelectItem value="Healthcare">Healthcare</SelectItem>
+                  <SelectItem value="Defense">Defense</SelectItem>
+                  <SelectItem value="Consumer">Consumer</SelectItem>
+                  <SelectItem value="Training & Simulation">Training & Simulation</SelectItem>
                 </SelectContent>
               </Select>
             </div>

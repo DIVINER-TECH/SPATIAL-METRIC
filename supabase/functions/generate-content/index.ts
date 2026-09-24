@@ -10,6 +10,8 @@ interface GenerateRequest {
   topic?: string;
   region?: string;
   category?: string;
+  industry?: string;
+  sector?: string;
   wordCount?: number;
   searchResults?: string; // Optional client-side results
 }
@@ -25,7 +27,42 @@ serve(async (req) => {
       throw new Error("GROQ_API_KEY is not configured");
     }
 
-    const { type, topic, region, category, wordCount = 800, searchResults: clientSearchResults } = await req.json() as GenerateRequest;
+    const modelId = Deno.env.get("GROQ_MODEL") || "llama-3.1-8b-instant";
+    const { type, topic, region, category, industry, sector, wordCount = 800, searchResults: clientSearchResults } = await req.json() as GenerateRequest;
+
+    if (!type) {
+      return new Response(JSON.stringify({ error: "Missing content type" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const normalizedTopic = (topic || "").trim();
+    const normalizedRegion = (region || "").trim();
+    const normalizedIndustry = (industry || "Spatial Computing").trim();
+    const normalizedSector = (sector || "Enterprise Applications").trim();
+
+    if (!normalizedTopic) {
+      return new Response(JSON.stringify({
+        error: "Missing required input: topic",
+        hint: "Send a topic like 'XR market expansion in Europe'"
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!normalizedRegion) {
+      return new Response(JSON.stringify({
+        error: "Missing required input: region",
+        hint: "Send a region like 'Global', 'North America', or 'Europe'"
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const marketContext = `${normalizedIndustry} / ${normalizedSector}`;
 
     // --- LIVE SEARCH INTEGRATION (TAVILY) ---
     let finalSearchResults = clientSearchResults || "";
@@ -35,11 +72,11 @@ serve(async (req) => {
       try {
         let searchQuery = "";
         if (type === 'article') {
-          searchQuery = `${topic || 'spatial computing market trends'} ${region || ''} latest items news statistics`;
+          searchQuery = `${normalizedTopic} ${normalizedRegion} ${normalizedIndustry} ${normalizedSector} latest market signals funding and adoption trends`;
         } else if (type === 'market-brief') {
-          searchQuery = `XR spatial computing market news deals funding ${region || 'global'} last week`;
+          searchQuery = `${normalizedIndustry} ${normalizedSector} market news deals funding ${normalizedRegion} last week`;
         } else if (type === 'startup-profile') {
-          searchQuery = `${topic || 'promising XR startups'} ${region || ''} funding metrics details`;
+          searchQuery = `${normalizedTopic} ${normalizedIndustry} ${normalizedSector} ${normalizedRegion} funding metrics competitive landscape`;
         }
 
         console.log(`Performing live search for: "${searchQuery}"...`);
@@ -104,10 +141,13 @@ CONTENT STRUCTURE (required sections):
 4. Investment Implications (actionable insights)
 5. Outlook and Projections (forward-looking analysis)`;
 
-      userPrompt = `Generate a comprehensive ${wordCount}+ word market intelligence article about: ${topic || 'XR market trends'}
+      userPrompt = `Generate a comprehensive ${wordCount}+ word market intelligence article about: ${normalizedTopic}
 
 Category: ${category || 'market-intelligence'}
-Region focus: ${region || 'Global'}
+Region focus: ${normalizedRegion}
+Industry focus: ${normalizedIndustry}
+Sector focus: ${normalizedSector}
+Market lens: ${marketContext}
 Current date: ${currentDate}
 
 REQUIRED ELEMENTS:
@@ -116,7 +156,7 @@ REQUIRED ELEMENTS:
 - At least 2 attributed expert quotes (name, title, organization)
 - Specific YoY growth percentages
 - Market size projections for 2026
-- Competitive landscape analysis
+- Competitive landscape analysis by region, industry, and sector
 - Risk factors and opportunities
 
 Format response as JSON:
@@ -134,13 +174,14 @@ IMPORTANT: The content field must be ${wordCount}+ words. Count carefully.`;
     } else if (type === 'market-brief') {
       systemPrompt = `You are a market analyst providing real-time XR market intelligence. Today is ${currentDate}. Generate actionable market updates with specific data points. Use plain text without any bold or italic formatting.${contextInstruction}`;
 
-      userPrompt = `Generate a market brief for ${region || 'global'} XR markets.
+      userPrompt = `Generate a market brief for ${normalizedRegion} ${normalizedIndustry} markets, with a focus on the ${normalizedSector} sector.
 
 Include:
 1. Top 3 market movers with specific context and numbers
 2. Key metrics with percentages and dollar amounts
 3. Investment signal (bullish/bearish/neutral) with detailed reasoning
 4. Notable deals or announcements from the past week
+5. Regional and sector-specific adoption patterns
 
 Format as JSON:
 {
@@ -154,12 +195,12 @@ Format as JSON:
     } else if (type === 'startup-profile') {
       systemPrompt = `You are a venture analyst specializing in spatial computing startups. Today is ${currentDate}. Generate detailed startup profiles suitable for investor due diligence. Use plain text without bold or italic formatting.${contextInstruction}`;
 
-      userPrompt = `Generate a detailed startup profile for a promising XR company in ${region || 'NA'} focusing on ${topic || 'enterprise XR solutions'}.
+      userPrompt = `Generate a detailed startup profile for a promising ${normalizedIndustry} company in ${normalizedRegion}, focusing on ${normalizedTopic} within the ${normalizedSector} sector.
 
 Include:
 1. Company overview and founding story
 2. Product/service description with technical details
-3. Market opportunity and competitive positioning
+3. Market opportunity and competitive positioning by region and sector
 4. Funding history with specific amounts and investors
 5. Key metrics (ARR, growth rate, customers, employees)
 6. Investment thesis with bull and bear cases
@@ -197,7 +238,7 @@ Format as JSON:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: modelId,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
