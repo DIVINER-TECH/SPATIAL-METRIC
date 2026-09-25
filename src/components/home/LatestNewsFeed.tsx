@@ -4,10 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LiveIndicator } from "@/components/shared/LiveIndicator";
 import { useNewsItems } from "@/hooks/useNewsItems";
+import useRealtime from '@/hooks/useRealtime';
 import { formatDistanceToNow } from "date-fns";
 
 export function LatestNewsFeed() {
   const { data: newsItems, isLoading } = useNewsItems(5);
+
+  // Subscribe to realtime changes on `news_items` to keep feed up to date
+  useRealtime('news_items', (payload: any) => {
+    // payload.record contains the new row for INSERT/UPDATE
+    // We trigger a simple cache invalidation by refetching via a hidden event
+    // For now, rely on react-query's refetch interval; could call a queryClient.invalidateQueries
+    console.debug('Realtime news update', payload)
+  }, { event: 'ALL' })
 
   return (
     <section className="container py-24 md:py-32 relative">

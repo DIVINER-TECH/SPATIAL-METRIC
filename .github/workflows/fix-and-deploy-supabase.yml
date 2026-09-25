@@ -1,0 +1,31 @@
+name: Fix Supabase Duplicate Migration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  fix-migration:
+    name: Run migration fix SQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run duplicate-migration fix script
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo 'SUPABASE_DB_URL secret is not set. Aborting.'
+            exit 1
+          fi
+          echo 'Running supabase/fix_duplicate_migration.sql against the database...'
+          psql "$SUPABASE_DB_URL" -f supabase/fix_duplicate_migration.sql
+
+  # Optionally, you may trigger a separate deployment step here if you have a
+  # non-interactive way to deploy functions (Supabase GitHub integration or CLI token).
