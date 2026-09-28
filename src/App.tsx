@@ -29,7 +29,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { supabase } from "./utils/supabase";
+import { isSupabaseConfigured, supabase } from "./integrations/supabase/client";
 
 const Index = lazy(() => import("./pages/Index"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -86,6 +86,8 @@ const AnimatedRoutes = () => {
   const [todos, setTodos] = useState<any[]>([])
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
     let mounted = true
     async function loadTodos() {
       try {
