@@ -13,4 +13,21 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          if (/node_modules\/(react|react-dom|react-router-dom|scheduler)\//.test(id)) {
+            return "vendor-react";
+          }
+          if (/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(id)) {
+            return "vendor-motion";
+          }
+          if (id.includes("/node_modules/@supabase/")) return "vendor-supabase";
+          if (id.includes("/node_modules/@radix-ui/")) return "vendor-radix";
+        },
+      },
+    },
+  },
 }));

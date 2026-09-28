@@ -28,8 +28,32 @@ import ApiAccess from "./pages/ApiAccess";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { supabase } from "./utils/supabase";
+
+const Index = lazy(() => import("./pages/Index"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MarketIntelligence = lazy(() => import("./pages/MarketIntelligence"));
+const SocialControlRoom = lazy(() => import("./pages/SocialControlRoom"));
+const TechExplain = lazy(() => import("./pages/TechExplain"));
+const Events = lazy(() => import("./pages/Events"));
+const SpatialUpdates = lazy(() => import("./pages/SpatialUpdates"));
+const Article = lazy(() => import("./pages/Article"));
+const Content = lazy(() => import("./pages/Content"));
+const CompanyProfile = lazy(() => import("./pages/CompanyProfile"));
+const RegionalIntelligence = lazy(() => import("./pages/RegionalIntelligence"));
+const VCDirectory = lazy(() => import("./pages/VCDirectory"));
+const CompanyTracker = lazy(() => import("./pages/CompanyTracker"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Careers = lazy(() => import("./pages/Careers"));
+const Press = lazy(() => import("./pages/Press"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
+const ApiAccess = lazy(() => import("./pages/ApiAccess"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const getStoredTheme = () => {
   const saved = localStorage.getItem("theme");
@@ -105,34 +129,36 @@ const AnimatedRoutes = () => {
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="relative z-10 pt-24"
         >
-          <Routes location={location}>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/market-intelligence" element={<MarketIntelligence />} />
-            <Route path="/social-control" element={<SocialControlRoom />} />
-            <Route path="/regional-intelligence" element={<RegionalIntelligence />} />
-            <Route path="/company-tracker" element={<CompanyTracker />} />
-            <Route path="/companies" element={<Navigate to="/company-tracker" replace />} />
-            <Route path="/startup-tracker" element={<Navigate to="/company-tracker" replace />} />
-            <Route path="/unicorn-tracker" element={<Navigate to="/company-tracker" replace />} />
-            <Route path="/vc-directory" element={<VCDirectory />} />
-            <Route path="/tech-explain" element={<TechExplain />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/spatial-updates" element={<SpatialUpdates />} />
-            <Route path="/article/:slug" element={<Article />} />
-            <Route path="/content/:id" element={<Content />} />
-            <Route path="/company/:slug" element={<CompanyProfile />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/press" element={<Press />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/newsletter" element={<Newsletter />} />
-            <Route path="/api" element={<ApiAccess />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes location={location}>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/market-intelligence" element={<MarketIntelligence />} />
+              <Route path="/social-control" element={<SocialControlRoom />} />
+              <Route path="/regional-intelligence" element={<RegionalIntelligence />} />
+              <Route path="/company-tracker" element={<CompanyTracker />} />
+              <Route path="/companies" element={<Navigate to="/company-tracker" replace />} />
+              <Route path="/startup-tracker" element={<Navigate to="/company-tracker" replace />} />
+              <Route path="/unicorn-tracker" element={<Navigate to="/company-tracker" replace />} />
+              <Route path="/vc-directory" element={<VCDirectory />} />
+              <Route path="/tech-explain" element={<TechExplain />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/spatial-updates" element={<SpatialUpdates />} />
+              <Route path="/article/:slug" element={<Article />} />
+              <Route path="/content/:id" element={<Content />} />
+              <Route path="/company/:slug" element={<CompanyProfile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/newsletter" element={<Newsletter />} />
+              <Route path="/api" element={<ApiAccess />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </motion.div>
       </AnimatePresence>
       {/* If `todos` were fetched, render a minimal list for debugging */}
